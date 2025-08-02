@@ -7,8 +7,34 @@
 
   });
 
-
   var baseUrl = "<?= base_url();?>";
+  
+  // CSRF Token variables
+  var csrfName = '<?= $this->security->get_csrf_token_name(); ?>';
+  var csrfHash = '<?= $this->security->get_csrf_hash(); ?>';
+
+  // Setup CSRF token for all AJAX requests
+  $.ajaxSetup({
+    beforeSend: function(xhr, settings) {
+      if (settings.type === 'POST' && settings.data) {
+        if (typeof settings.data === 'string') {
+          settings.data += '&' + csrfName + '=' + encodeURIComponent(csrfHash);
+        } else if (typeof settings.data === 'object') {
+          settings.data[csrfName] = csrfHash;
+        }
+      }
+    },
+    complete: function(xhr) {
+      try {
+        var response = xhr.responseJSON;
+        if (response && response.csrf_hash) {
+          csrfHash = response.csrf_hash;
+        }
+      } catch(e) {
+        // Ignore JSON parsing errors
+      }
+    }
+  });
 
   $(document).ready(function() {
 
@@ -86,7 +112,22 @@
     "order": [],
     "ajax": {
       "url": baseUrl + 'ajax/karyawanData',
-      "type": "POST"
+      "type": "POST",
+      "data": function(d) {
+        d[csrfName] = csrfHash;
+      },
+      "dataSrc": function(json) {
+        if (json.csrf_hash) {
+          csrfHash = json.csrf_hash;
+        }
+        return json.data;
+      },
+      "error": function(xhr, error, thrown) {
+        console.log('DataTable Error:', error);
+        if (xhr.status === 403) {
+          location.reload();
+        }
+      }
     },
     "columnDefs": [{
       "targets": [0],
@@ -109,9 +150,22 @@
       "url": baseUrl + 'ajax/penilaianData',
       "type": "POST",
       "data": function(d) {
+        d[csrfName] = csrfHash;
         d.filterUnit = $('#filterUnit').val();
         d.filterTanggalMulai = $('#filterTanggalMulai').val();
         d.filterTanggalSelesai = $('#filterTanggalSelesai').val();
+      },
+      "dataSrc": function(json) {
+        if (json.csrf_hash) {
+          csrfHash = json.csrf_hash;
+        }
+        return json.data;
+      },
+      "error": function(xhr, error, thrown) {
+        console.log('DataTable Error:', error);
+        if (xhr.status === 403) {
+          location.reload();
+        }
       }
     },
     "columnDefs": [{
@@ -151,12 +205,20 @@
       closeOnCancel: true
     }, function(isConfirm) {
       if (isConfirm) {
+        var data = {
+          id: id
+        };
+        data[csrfName] = csrfHash;
+        
         $.ajax({
           url: baseUrl + 'ajax/penilaianDelete',
           type: 'POST',
-          data: {id: id},
+          data: data,
           dataType: 'json',
           success: function(response) {
+            if (response.csrf_hash) {
+              csrfHash = response.csrf_hash;
+            }
             if(response.status == 'success') {
               swal("Terhapus!", response.message, "success");
               penilaianData.ajax.reload();
@@ -164,8 +226,15 @@
               swal("Error!", response.message, "error");
             }
           },
-          error: function() {
-            swal("Error!", "Terjadi kesalahan saat menghapus data.", "error");
+          error: function(xhr) {
+            if (xhr.status === 403) {
+              swal("Error!", "CSRF token tidak valid. Halaman akan dimuat ulang.", "error");
+              setTimeout(function() {
+                location.reload();
+              }, 2000);
+            } else {
+              swal("Error!", "Terjadi kesalahan saat menghapus data.", "error");
+            }
           }
         });
       }

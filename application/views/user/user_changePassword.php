@@ -32,6 +32,7 @@
             <!-- /.card-header -->
             <!-- form start -->
             <form action="<?= base_url('User/updatePassword');?>" method="post">
+              <input type="hidden" name="<?= $this->security->get_csrf_token_name(); ?>" value="<?= $this->security->get_csrf_hash(); ?>">
               <div class="card-body">
                 <input type="hidden" name="user_id" value="<?= $user->id;?>">
                 

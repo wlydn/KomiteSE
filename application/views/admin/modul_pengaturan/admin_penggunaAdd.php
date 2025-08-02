@@ -62,6 +62,7 @@
 
               <form action="<?= base_url('Admin/pengaturanPenggunaAdd')?>" method="post">
 
+                <input type="hidden" name="<?= $this->security->get_csrf_token_name(); ?>" value="<?= $this->security->get_csrf_hash(); ?>">
 
                 <!-- Level -->
                 <div class="form-group">

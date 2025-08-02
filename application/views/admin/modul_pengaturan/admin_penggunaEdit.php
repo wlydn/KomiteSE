@@ -9,8 +9,8 @@
                 <div class="col-sm-6">
                   <ol class="breadcrumb float-sm-right">
                     <li class="breadcrumb-item"><small>Admin</small></li>
-                    <li class="breadcrumb-item"><a href="<?= base_url('admin/pengaturanPengguna');?>"><small><?= $parent ;?></small></a></li>
-                    <li class="breadcrumb-item"><a href="<?= base_url('admin/pengaturanPenggunaEdit/'.$this->encrypt->encode($oneUsers->id));?>"><small><?= $page ;?></small></a></li>
+                    <li class="breadcrumb-item"><a href="<?= base_url('Admin/pengaturanPengguna');?>"><small><?= $parent ;?></small></a></li>
+                    <li class="breadcrumb-item"><a href="<?= base_url('Admin/pengaturanPenggunaEdit/'.$this->encrypt->encode($oneUsers->id));?>"><small><?= $page ;?></small></a></li>
                   </ol>
                 </div><!-- /.col -->
               </div><!-- /.row -->
@@ -55,8 +55,9 @@
                 </div>
                 <div class="card-body">
 
-                  <form action="<?= base_url('admin/pengaturanPenggunaEdit/'.$this->encrypt->encode($oneUsers->id))?>" method="post">
+                  <form action="<?= base_url('Admin/pengaturanPenggunaEdit/'.$this->encrypt->encode($oneUsers->id))?>" method="post">
 
+                    <input type="hidden" name="<?= $this->security->get_csrf_token_name(); ?>" value="<?= $this->security->get_csrf_hash(); ?>">
                     <input type="hidden" name="z" value="<?= $oneUsers->id ;?>">
 										
 										<!-- Username -->

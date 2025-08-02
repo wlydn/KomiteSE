@@ -56,7 +56,7 @@
                 <div class="card-body">
 
                   <form action="<?= base_url('User/listPenilaianEdit/'.$this->encrypt->encode($onepel->id_penilaian).'')?>" method="post">
-
+                    <input type="hidden" name="<?= $this->security->get_csrf_token_name(); ?>" value="<?= $this->security->get_csrf_hash(); ?>">
                     <input type="hidden" name="z" value="<?= $onepel->id_penilaian ;?>">
 
                     <div class="row ">

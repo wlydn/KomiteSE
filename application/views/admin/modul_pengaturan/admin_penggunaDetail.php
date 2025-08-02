@@ -57,6 +57,8 @@
 
                   <form action="<?= base_url('admin/pengaturanPenggunaAdd')?>" method="post">
 
+                    <input type="hidden" name="<?= $this->security->get_csrf_token_name(); ?>" value="<?= $this->security->get_csrf_hash(); ?>">
+
                     <!-- Fullname -->
                     <div class="form-group">
                       <label for="detailPenggunaFullname" class="col-form-label">Nama Pegawai</label>

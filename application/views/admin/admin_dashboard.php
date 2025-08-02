@@ -59,7 +59,7 @@
                 <div class="icon">
                   <i class="fa fa-user"></i>
                 </div>
-                <a href="<?= base_url('Admin/dataKategoriListKaryawan')?>" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+                <a href="<?= base_url('Admin/dataListKaryawan')?>" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
               </div>
             </div>
             <!-- ./col -->
@@ -74,7 +74,7 @@
                 <div class="icon">
                   <i class="far fa-list-alt"></i>
                 </div>
-                <a href="<?= base_url('Admin/dataKategoriKategoriPelanggaran')?>" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+                <a href="<?= base_url('Admin/dataIndikatorPenilaian')?>" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
               </div>
             </div>
             <!-- ./col -->
@@ -104,7 +104,7 @@
                 <div class="icon">
                   <i class="fas fa-calendar-week"></i>
                 </div>
-                <a href="<?= base_url('Admin/listPenilaian')?>" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+                <a href="<?= base_url('Admin/dataListPenilaian')?>" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
               </div>
             </div>
             <!-- ./col -->
@@ -119,7 +119,7 @@
                 <div class="icon">
                   <i class="fas fa-calendar-alt"></i>
                 </div>
-                <a href="<?= base_url('Admin/listPenilaian')?>" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+                <a href="<?= base_url('Admin/dataListPenilaian')?>" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
               </div>
             </div>
             <!-- ./col -->

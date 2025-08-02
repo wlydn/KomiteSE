@@ -32,13 +32,13 @@
             </a>
             <ul class="nav nav-treeview">
               <li class="nav-item ">
-                <a href="<?= base_url('Admin/dataKategoriKategoriPelanggaran')?>" class="nav-link <?php if($page == 'Indikator Penilaian' || $page == 'Indikator Penilaian Add' || $page == 'Kategori Pelanggaran Edit'){echo 'active';} ?>">
+                <a href="<?= base_url('Admin/dataIndikatorPenilaian')?>" class="nav-link <?php if($page == 'Indikator Penilaian' || $page == 'Indikator Penilaian Add' || $page == 'Kategori Pelanggaran Edit'){echo 'active';} ?>">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Indikator Penilaian</p>
                 </a>
               </li>
               <li class="nav-item">
-                <a href="<?= base_url('Admin/dataKategoriListKaryawan')?>" class="nav-link <?php if($page == 'List Karyawan' || $page == 'List Karyawan Add' || $page == 'List Karyawan Detail' || $page == 'List Karyawan Edit'){echo 'active';} ?>">
+                <a href="<?= base_url('Admin/dataListKaryawan')?>" class="nav-link <?php if($page == 'List Karyawan' || $page == 'List Karyawan Add' || $page == 'List Karyawan Detail' || $page == 'List Karyawan Edit'){echo 'active';} ?>">
                   <i class="far fa-circle nav-icon"></i>
                   <p>List Karyawan</p>
                 </a>
@@ -46,7 +46,7 @@
             </ul>
           </li>
           <li class="nav-item">
-            <a href="<?= base_url('Admin/listPenilaian')?>" class="nav-link <?php if($parent == 'Data Laporan'){echo 'active';} ?>">
+            <a href="<?= base_url('Admin/dataListPenilaian')?>" class="nav-link <?php if($parent == 'Data Laporan'){echo 'active';} ?>">
               <i class="nav-icon fas fa-file-alt"></i>
               <p>
                 List Penilaian Karyawan

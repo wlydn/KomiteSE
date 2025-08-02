@@ -13,6 +13,7 @@
 
                 <div class="col-lg-5 ml-auto" data-aos="fade-up" data-aos-delay="500">
                   <form action="<?= base_url('home/login');?>" method="post" class="form-box">
+                    <input type="hidden" name="<?= $this->security->get_csrf_token_name(); ?>" value="<?= $this->security->get_csrf_hash(); ?>">
                     <h3 class="h4 text-black mb-4">Login
 										</h3>
                     <div class="form-group">

@@ -371,7 +371,7 @@ class Ajax_model extends CI_Model {
 			tb_indikator.code as kode_indikator,
 			tb_indikator.violation_name as nama_penilaian,
 			tb_indikator.get_point as poin,
-			tb_users.username_nik as penilai,
+			tb_users.username as penilai,
 			tb_users.level as level_penilai
 		');
 		$this->db->from($this->tablePenilaian);
@@ -398,7 +398,7 @@ class Ajax_model extends CI_Model {
 	function get_user_by_id($id){
 		$this->db->select('
 			tb_users.id,
-			tb_users.username_nik,
+			tb_users.username,
 			tb_users.level,
 			tb_users.status,
 			pegawai.nama as full_name,
@@ -418,7 +418,7 @@ class Ajax_model extends CI_Model {
 			tb_penilaian.date,
 			tb_indikator.violation_name as penilaian,
 			tb_indikator.get_point as poin,
-			tb_users.username_nik as penilai
+			tb_users.username as penilai
 		');
 		$this->db->from($this->tablePenilaian);
 		$this->db->join('tb_indikator', 'tb_penilaian.indikator_id = tb_indikator.id', 'left');
@@ -453,7 +453,7 @@ class Ajax_model extends CI_Model {
 			tb_penilaian.date,
 			pegawai.nama as nama_karyawan,
 			pegawai.nik,
-			tb_users.username_nik as penilai
+			tb_users.username as penilai
 		');
 		$this->db->from($this->tablePenilaian);
 		$this->db->join('pegawai', 'tb_penilaian.pegawai_id = pegawai.id', 'left');

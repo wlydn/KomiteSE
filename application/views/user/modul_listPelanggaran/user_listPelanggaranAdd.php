@@ -56,6 +56,7 @@
                 <div class="card-body">
 
                     <form action="<?= base_url('User/listPenilaianAdd')?>" method="post">
+                    <input type="hidden" name="<?= $this->security->get_csrf_token_name(); ?>" value="<?= $this->security->get_csrf_hash(); ?>">
                     <div class="row ">
 
                       <div class="col-md-6">

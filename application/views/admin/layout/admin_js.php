@@ -9,6 +9,42 @@
   });
 
   var baseUrl = "<?= base_url();?>";
+  
+  // CSRF Token for AJAX requests
+  var csrfName = '<?= $this->security->get_csrf_token_name(); ?>';
+  var csrfHash = '<?= $this->security->get_csrf_hash(); ?>';
+  
+  // Function to update CSRF token
+  function updateCSRFToken() {
+    $.get(baseUrl + 'ajax/getCSRFToken', function(data) {
+      if(data.csrf_hash) {
+        csrfHash = data.csrf_hash;
+      }
+    });
+  }
+  
+  // Setup AJAX to include CSRF token in all requests
+  $.ajaxSetup({
+    beforeSend: function(xhr, settings) {
+      // Add CSRF token to data if it's a POST request
+      if (settings.type === 'POST') {
+        if (typeof settings.data === 'string') {
+          settings.data += '&' + csrfName + '=' + encodeURIComponent(csrfHash);
+        } else if (typeof settings.data === 'object') {
+          settings.data[csrfName] = csrfHash;
+        } else {
+          settings.data = csrfName + '=' + encodeURIComponent(csrfHash);
+        }
+      }
+    },
+    complete: function(xhr, status) {
+      // Update CSRF token from response header if available
+      var token = xhr.getResponseHeader('X-CSRF-TOKEN');
+      if(token) {
+        csrfHash = token;
+      }
+    }
+  });
 
      //Date range picker
      $('#reservation').daterangepicker({
@@ -39,24 +75,6 @@
 
 
      $(document).ready(function() {
-
-
-      // /*-- Active Link  --*/
-      // var url = window.location;
-      // const allLinks = document.querySelectorAll('.nav-item a');
-      // const currentLink = [...allLinks].filter(e => {
-      //   return e.href == url;
-      // });
-
-      // currentLink[0].classList.add("active");
-      // currentLink[0].closest(".nav-treeview").style.display = "block ";
-      // currentLink[0].closest(".has-treeview").classList.add("menu-open");
-      // $('.menu-open').find('a').each(function() {
-      //   if (!$(this).parents().hasClass('active')) {
-      //     $(this).parents().addClass("active");
-      //     $(this).addClass("active");
-      //   }
-      // });
 
       /*-- Ajax Responsive Table Whitout ServerSide For Mobile  --*/
       var terakhir = $('#terakhir').DataTable( {
@@ -103,178 +121,7 @@
         oTable.search($(this).val()).draw() ;
       });
 
-      /*-- Ajax Select Nama Kelas  --*/
-      $('#kelas').change(function(){
-        var kelas = $('#kelas').val();
-        if(kelas != ''){
-          $.ajax({
-            url:baseUrl+'ajax/fetch_subNamakelas',
-            method:"POST",
-            data:{kelas:kelas},
-            success:function(data){
-              $('#namaKelas').html(data);
-
-              if(kelas == 'I'){
-                $('#namaSiswa').html('<option value="" selected="selected">Pilih Kategori Kelas Terlebih Dahulu</option>');
-              }else{
-                $('#namaSiswa').html('<option value="" selected="selected">Pilih Nama Kelas Terlebih Dahulu</option>');
-              }
-            }
-          })
-        }
-      });
-
-      /*-- Ajax Select Nama Siswa  --*/
-      $('#namaKelas').change(function(){
-        var namaKelas = $('#namaKelas').val();
-        if(namaKelas != ''){
-          $.ajax({
-            url:baseUrl+'ajax/fetch_subNamaSiswa',
-            method:"POST",
-            data:{namaKelas:namaKelas},
-            success:function(data){
-              $('#namaSiswa').html(data);
-            }
-          })
-        }
-      });
-
-
-
-      /*-- Ajax Select Nama Kelas  --*/
-      $('#addkelas').change(function(){
-        var kelas = $('#addkelas').val();
-        if(kelas != ''){
-          $.ajax({
-            url:baseUrl+'ajax/fetch_subNamakelas',
-            method:"POST",
-            data:{kelas:kelas},
-            success:function(data){
-              $('#addnamaKelas').html(data)
-
-            }
-          })
-        }
-      });
-
-
-
-      /*-- Ajax Select Tipe Pencarian Laporan  --*/
-      $('#tipePencarian').change(function(){
-        var pencarian = $('#tipePencarian').val();
-        if(pencarian == 'siswa'){
-
-          $("#pencarianKelas").css("display", "none");
-          $("#pencarianSiswa").css("display", "block");
-
-        }else if(pencarian == 'kelas'){
-
-          $("#pencarianSiswa").css("display", "none")
-          $("#pencarianKelas").css("display", "block");
-
-        }else if(pencarian == ''){
-
-          $("#pencarianKelas").css("display", "none");
-          $("#pencarianSiswa").css("display", "none");
-
-        }
-      });
-
     });
-
-
-
-$(document).ready(function() {
-
-  /*-- Ajax Select Level  --*/
-  $('#addPenggunaLevel').change(function(){
-    var penggunaLevel = $('#addPenggunaLevel').val();
-    if(penggunaLevel == 'Admin'){
-
-      $("#addPenggunaAdmin").css("display", "block");
-      $("#addPenggunaGuru").css("display", "none");
-      $("#addPenggunaWali").css("display", "none");
-      $("#addPenggunaSiswa").css("display", "none");
-
-    }else if(penggunaLevel == 'User'){
-
-      $("#addPenggunaAdmin").css("display", "none");
-      $("#addPenggunaUser").css("display", "block");
-      $("#addPenggunaWali").css("display", "none");
-      $("#addPenggunaSiswa").css("display", "none");
-
-    }else if(penggunaLevel == 'Wali'){
-
-      $("#addPenggunaAdmin").css("display", "none");
-      $("#addPenggunaUser").css("display", "none");
-      $("#addPenggunaWali").css("display", "block");
-      $("#addPenggunaSiswa").css("display", "none");
-
-    }else if(penggunaLevel == 'Siswa'){
-
-      $("#addPenggunaAdmin").css("display", "none");
-      $("#addPenggunaUser").css("display", "none");
-      $("#addPenggunaWali").css("display", "none");
-      $("#addPenggunaSiswa").css("display", "block");
-
-    }
-  });
-
-
-  /*-- Ajax Select Nama Kelas  --*/
-  $('#addNIKUser').change(function(){
-    var idUser = $('#addNIKUser').val();
-    if(idUser != ''){
-      $.ajax({
-        url:baseUrl+'ajax/fetch_nikUser',
-        method:"POST",
-        dataType:'json',
-        data:{idUser:idUser},
-        success:function(data){
-          $('#addPenggunaFullnameUser').val(data.nama);
-          $('#addPenggunaUsernameUser').val(data.nik);
-        }
-      })
-    }
-  });
-
-
-  /*-- Ajax Select Nama Kelas  --*/
-  $('#addNISNWali').change(function(){
-    var nisnWali = $('#addNISNWali').val();
-    if(nisnWali != ''){
-      $.ajax({
-        url:baseUrl+'ajax/fetch_nisnWali',
-        method:"POST",
-        dataType:'json',
-        data:{nisnWali:nisnWali},
-        success:function(data){
-          $('#addPenggunaFullnameWali').val(data.nama);
-          $('#addPenggunaUsernameWali').val(data.nisn);
-        }
-      })
-    }
-  });
-
-  /*-- Ajax Select Nama Kelas  --*/
-  $('#addNISNSiswa').change(function(){
-    var nisnSiswa = $('#addNISNSiswa').val();
-    if(nisnSiswa != ''){
-      $.ajax({
-        url:baseUrl+'ajax/fetch_nisnSiswa',
-        method:"POST",
-        dataType:'json',
-        data:{nisnSiswa:nisnSiswa},
-        success:function(data){
-          $('#addPenggunaFullnameSiswa').val(data.nama);
-          $('#addPenggunaUsernameSiswa').val(data.nisn);
-        }
-      })
-    }
-  });
-
-
-});
 
 
 $(function () {
@@ -335,9 +182,12 @@ function deleteDataUser(id){
 
     $.ajax({
 
-      url : "<?= base_url('admin/dataMasterUserDelete')?>",
+      url : "<?= base_url('Admin/dataMasterUserDelete')?>",
       method:"post",
-      data:{id:id},
+      data:{
+        id:id,
+        [csrfName]: csrfHash
+      },
       dataType: 'json',
       success:function(data){
 
@@ -368,7 +218,7 @@ function deleteDataUser(id){
   });
 };
 
-function deleteDataKelas(id){
+function deleteDataPengguna(username){
 
   swal({
 
@@ -384,142 +234,42 @@ function deleteDataKelas(id){
 
   function(){
 
-    $.ajax({
+      $.ajax({
 
-      url : "<?= base_url('admin/dataMasterKelasDelete')?>",
-      method:"post",
-      data:{id:id},
-      dataType: 'json',
-      success:function(data){
+        url : "<?= base_url('admin/pengaturanPenggunaDelete')?>",
+        method:"post",
+        data:{
+          username:username,
+          [csrfName]: csrfHash
+        },
+        dataType: 'json',
+        success:function(data){
 
-        swal({
-          title: "Deleted!",
-          text: "Data Berhasil Di Hapus.",
-          type: "success",
-          showConfirmButton: false,
-          timer: 1500
-        });
-        setInterval('location.reload()', 2000);        
+          swal({
+            title: "Deleted!",
+            text: "Data Berhasil Di Hapus.",
+            type: "success",
+            showConfirmButton: false,
+            timer: 1500
+          });
+          setInterval('location.reload()', 2000);        
 
-      },
+        },
 
-      error:function(data){
-        swal({
-          title: "Canceled!",
-          text: "Data Tidak Dapat Di Hapus.",
-          type: "error",
-          showConfirmButton: false,
-          timer: 1500
-        });
-        setInterval('location.reload()', 2000);        
+        error:function(data){
+          swal({
+            title: "Canceled!",
+            text: "Data Tidak Dapat Di Hapus.",
+            type: "error",
+            showConfirmButton: false,
+            timer: 1500
+          });
+          setInterval('location.reload()', 2000);        
 
-      }
+        }
 
+      });
     });
-  });
-};
-
-
-function deleteDataSiswa(id){
-
-  swal({
-
-    title: "Apakah Anda Yakin Ingin Menghapus?",
-    text: "Anda tidak akan dapat memulihkan data ini!",
-    type: "warning",
-    showCancelButton: true,
-    confirmButtonClass: "btn-danger",
-    confirmButtonText: "Yes, delete it!",
-    closeOnConfirm: false
-
-  },
-
-  function(){
-
-    $.ajax({
-
-      url : "<?= base_url('admin/dataMasterSiswaDelete')?>",
-      method:"post",
-      data:{id:id},
-      dataType: 'json',
-      success:function(data){
-
-        swal({
-          title: "Deleted!",
-          text: "Data Berhasil Di Hapus.",
-          type: "success",
-          showConfirmButton: false,
-          timer: 1500
-        });
-        setInterval('location.reload()', 2000);        
-
-      },
-
-      error:function(data){
-        swal({
-          title: "Canceled!",
-          text: "Data Tidak Dapat Di Hapus.",
-          type: "error",
-          showConfirmButton: false,
-          timer: 1500
-        });
-        setInterval('location.reload()', 2000);        
-
-      }
-
-    });
-  });
-};
-
-function deleteDataPengguna(id){
-
-  swal({
-
-    title: "Apakah Anda Yakin Ingin Menghapus?",
-    text: "Anda tidak akan dapat memulihkan data ini!",
-    type: "warning",
-    showCancelButton: true,
-    confirmButtonClass: "btn-danger",
-    confirmButtonText: "Yes, delete it!",
-    closeOnConfirm: false
-
-  },
-
-  function(){
-
-    $.ajax({
-
-      url : "<?= base_url('admin/pengaturanPenggunaDelete')?>",
-      method:"post",
-      data:{id:id},
-      dataType: 'json',
-      success:function(data){
-
-        swal({
-          title: "Deleted!",
-          text: "Data Berhasil Di Hapus.",
-          type: "success",
-          showConfirmButton: false,
-          timer: 1500
-        });
-        setInterval('location.reload()', 2000);        
-
-      },
-
-      error:function(data){
-        swal({
-          title: "Canceled!",
-          text: "Data Tidak Dapat Di Hapus.",
-          type: "error",
-          showConfirmButton: false,
-          timer: 1500
-        });
-        setInterval('location.reload()', 2000);        
-
-      }
-
-    });
-  });
 };
 
 
@@ -534,8 +284,21 @@ var pelanggaranData = $('#pelanggaranData').DataTable({
   "order": [],
   "ajax": {
     "url": baseUrl+'ajax/pelanggaranData',
-    "type": "POST"
-
+    "type": "POST",
+    "data": function(d) {
+      d[csrfName] = csrfHash;
+      return d;
+    },
+    "dataSrc": function(json) {
+      if(json.csrf_hash) {
+        csrfHash = json.csrf_hash;
+      }
+      return json.data;
+    },
+    "error": function(xhr, error, thrown) {
+      console.log('DataTables Error:', error);
+      updateCSRFToken();
+    }
   },
 
   "columnDefs": [{ 
@@ -563,8 +326,21 @@ var karyawanData = $('#karyawanData').DataTable({
   "order": [],
   "ajax": {
     "url": baseUrl+'ajax/karyawanData',
-    "type": "POST"
-
+    "type": "POST",
+    "data": function(d) {
+      d[csrfName] = csrfHash;
+      return d;
+    },
+    "dataSrc": function(json) {
+      if(json.csrf_hash) {
+        csrfHash = json.csrf_hash;
+      }
+      return json.data;
+    },
+    "error": function(xhr, error, thrown) {
+      console.log('DataTables Error:', error);
+      updateCSRFToken();
+    }
   },
 
   "columnDefs": [{ 
@@ -592,8 +368,21 @@ var penggunaData = $('#penggunaData').DataTable({
   "order": [],
   "ajax": {
     "url": baseUrl+'ajax/penggunaData',
-    "type": "POST"
-
+    "type": "POST",
+    "data": function(d) {
+      d[csrfName] = csrfHash;
+      return d;
+    },
+    "dataSrc": function(json) {
+      if(json.csrf_hash) {
+        csrfHash = json.csrf_hash;
+      }
+      return json.data;
+    },
+    "error": function(xhr, error, thrown) {
+      console.log('DataTables Error:', error);
+      updateCSRFToken();
+    }
   },
 
   "columnDefs": [{ 
@@ -621,9 +410,26 @@ var penilaianData = $('#penilaianData').DataTable({
     "url": baseUrl + 'ajax/penilaianData',
     "type": "POST",
     "data": function(d) {
+      // Add CSRF token
+      d[csrfName] = csrfHash;
+      // Add filter data
       d.filterUnit = $('#filterUnit').val();
       d.filterTanggalMulai = $('#filterTanggalMulai').val();
       d.filterTanggalSelesai = $('#filterTanggalSelesai').val();
+      return d;
+    },
+    "dataSrc": function(json) {
+      // Update CSRF token if provided in response
+      if(json.csrf_hash) {
+        csrfHash = json.csrf_hash;
+      }
+      return json.data;
+    },
+    "error": function(xhr, error, thrown) {
+      console.log('DataTables Error:', error);
+      console.log('Response:', xhr.responseText);
+      // Try to get new CSRF token
+      updateCSRFToken();
     }
   },
   "columnDefs": [{ 
@@ -672,28 +478,70 @@ function deleteDataPenilaianAdmin(id){
         allowOutsideClick: false
       });
       
+      // Set a timeout to handle stuck processing dialogs
+      var timeoutId = setTimeout(function() {
+        // Force clear any stuck processing dialogs after 10 seconds
+        if(typeof penilaianData !== 'undefined') {
+          penilaianData.processing(false);
+        }
+        $('.dataTables_processing').hide();
+        
+        swal({
+          title: "Peringatan!",
+          text: "Operasi memakan waktu lebih lama dari biasanya. Data mungkin sudah terhapus. Halaman akan dimuat ulang untuk memverifikasi.",
+          type: "warning",
+          confirmButtonText: "OK"
+        }, function() {
+          if(typeof penilaianData !== 'undefined') {
+            penilaianData.ajax.reload(null, false);
+          } else {
+            location.reload();
+          }
+        });
+      }, 10000);
+      
       $.ajax({
         url : baseUrl + "ajax/penilaianDelete",
         method: "POST",
-        data: {id: id},
+        data: {
+          id: id,
+          [csrfName]: csrfHash
+        },
         dataType: 'json',
+        timeout: 15000, // 15 second timeout
         success: function(response){
+          // Clear the timeout since we got a response
+          clearTimeout(timeoutId);
+          
+          // Force hide any processing dialogs
+          if(typeof penilaianData !== 'undefined') {
+            penilaianData.processing(false);
+          }
+          $('.dataTables_processing').hide();
+          
+          // Update CSRF token if provided
+          if(response.csrf_hash) {
+            csrfHash = response.csrf_hash;
+          }
+          
           if(response.status == 'success') {
             swal({
               title: "Terhapus!",
               text: response.message || "Data penilaian berhasil dihapus!",
               type: "success",
               showConfirmButton: false,
-              timer: 2000
+              timer: 1500
             });
-            // Reload the DataTable after a short delay
+            // Redirect if redirect_url is provided
             setTimeout(function() {
-              if(typeof penilaianData !== 'undefined') {
+              if(response.redirect_url) {
+                window.location.href = response.redirect_url;
+              } else if(typeof penilaianData !== 'undefined') {
                 penilaianData.ajax.reload(null, false);
               } else {
                 location.reload();
               }
-            }, 1500);
+            }, 1000);
           } else {
             // Check if session expired and redirect is needed
             if(response.redirect) {
@@ -716,9 +564,27 @@ function deleteDataPenilaianAdmin(id){
           }
         },
         error: function(xhr, status, error){
+          // Clear the timeout since we got a response (even if error)
+          clearTimeout(timeoutId);
+          
           console.log("AJAX Error: ", xhr.responseText);
+          console.log("Status: ", status);
+          console.log("Error: ", error);
+          
+          // Force hide any processing dialogs immediately
+          if(typeof penilaianData !== 'undefined') {
+            penilaianData.processing(false);
+          }
+          $('.dataTables_processing').hide();
+          
+          // Update CSRF token on error
+          updateCSRFToken();
+          
           try {
             var response = JSON.parse(xhr.responseText);
+            if(response.csrf_hash) {
+              csrfHash = response.csrf_hash;
+            }
             if(response.redirect) {
               swal({
                 title: "Sesi Berakhir!",
@@ -737,12 +603,30 @@ function deleteDataPenilaianAdmin(id){
               });
             }
           } catch(e) {
-            swal({
-              title: "Error!",
-              text: "Terjadi kesalahan saat menghapus data. Silakan coba lagi.",
-              type: "error",
-              confirmButtonText: "OK"
-            });
+            // Handle CSRF token error specifically
+            if(xhr.status === 403 && xhr.responseText.includes("The action you have requested is not allowed")) {
+              // Check if deletion actually succeeded despite CSRF error
+              swal({
+                title: "Peringatan!",
+                text: "Terjadi masalah dengan token keamanan, tetapi data mungkin sudah terhapus. Halaman akan dimuat ulang untuk memverifikasi.",
+                type: "warning",
+                confirmButtonText: "OK"
+              }, function() {
+                // Reload the DataTable to check if deletion succeeded
+                if(typeof penilaianData !== 'undefined') {
+                  penilaianData.ajax.reload(null, false);
+                } else {
+                  location.reload();
+                }
+              });
+            } else {
+              swal({
+                title: "Error!",
+                text: "Terjadi kesalahan saat menghapus data. Silakan coba lagi.",
+                type: "error",
+                confirmButtonText: "OK"
+              });
+            }
           }
         }
       });

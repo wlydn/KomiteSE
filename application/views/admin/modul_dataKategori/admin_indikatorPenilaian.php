@@ -36,7 +36,37 @@
               </div>
               <!--/. Col -->
             </div>
-          <?php endif ;?>             
+          <?php endif ;?>
+          
+          <?php if($this->session->flashdata('success')) : ?>
+            <!-- Success Message -->
+            <div class="row">
+              <div class="col-12">
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                  <h5><i class="fas fa-check"></i> Success:</h5>
+                  <?= $this->session->flashdata('success'); ?>
+                  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          <?php endif ;?>
+          
+          <?php if($this->session->flashdata('error')) : ?>
+            <!-- Error Message -->
+            <div class="row">
+              <div class="col-12">
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                  <h5><i class="fas fa-exclamation-triangle"></i> Error:</h5>
+                  <?= $this->session->flashdata('error'); ?>
+                  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          <?php endif ;?>
         </div><!-- /.container-fluid -->
       </div>
       <!-- /.content-header -->
@@ -81,8 +111,8 @@
                     <td><?= $pel->violation_name;?></td>
                     <td>
                       <a class="btn btn-sm btn-info" style="margin-right:10px; height: 30px; width: 30px;" href="#" data-toggle="modal" data-target="#pelanggaranDetailModal<?= $pel->id;?>" title="Detail"><i class="fas fa-info"></i></a>
-                      <a class="btn btn-sm btn-warning"  style="margin-right:10px; height: 30px; width: 30px;" href="#" data-toggle="modal" data-target="#pelanggaranEditModal<?= $pel->id;?>" title="Edit"><i class="fas fa-edit text-white"></i></a>
-                      <a class="btn btn-sm btn-danger"style="margin-right:10px; height: 30px; width: 30px;" onclick=" deletePel(<?= $pel->id?>)" id="<?= $pel->id ;?>" title="Delete"><i class="fas fa-trash text-white"></i></a>
+                      <!-- <a class="btn btn-sm btn-warning"  style="margin-right:10px; height: 30px; width: 30px;" href="#" data-toggle="modal" data-target="#pelanggaranEditModal<?= $pel->id;?>" title="Edit"><i class="fas fa-edit text-white"></i></a>
+                      <a class="btn btn-sm btn-danger"style="margin-right:10px; height: 30px; width: 30px;" onclick=" deletePel(<?= $pel->id?>)" id="<?= $pel->id ;?>" title="Delete"><i class="fas fa-trash text-white"></i></a> -->
                     </td>
                   </tr>
                 <?php endforeach; ?>
@@ -106,25 +136,26 @@
                 <span aria-hidden="true">&times;</span>
               </button>
             </div>
-            <form action="<?php echo base_url('admin/dataKategoriKategoriPelanggaranAdd'); ?>" method="post">
+            <form action="<?php echo base_url('admin/dataIndikatorPenilaianAdd'); ?>" method="post">
+              <input type="hidden" name="<?= $this->security->get_csrf_token_name(); ?>" value="<?= $this->security->get_csrf_hash(); ?>">
               <div class="modal-body">
 
 								<div class="form-group">
 									<label for="addCode">Code</label>
-									<input type="text" name="code" class="form-control" id="addCode" placeholder="Code Pelanggaran">
+									<input type="text" name="code" class="form-control" id="addCode" placeholder="Code Pelanggaran" required>
 									<?php echo form_error('code', '<small class="text-danger pl-3">', '</small>');?>
 								</div>
 
                 <div class="form-group">
                  <label  for="addNama">Indikator Penilaian</label>
-                 <input type="text" name="nama" class="form-control" id="addNama" placeholder="Nama Kategori Pelanggaran">
+                 <input type="text" name="nama" class="form-control" id="addNama" placeholder="Nama Kategori Pelanggaran" required>
                  <?php echo form_error('nama', '<small class="text-danger pl-3">', '</small>');?>
                </div>
 
              </div>
              <div class="modal-footer justify-content-between">
               <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal"><i class="fas fa-times"></i>&ensp;Close</button>
-              <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-plus"></i>&ensp;Add</button>
+              <button type="submit" class="btn btn-primary btn-sm" onclick="console.log('Form submitted with:', document.getElementById('addCode').value, document.getElementById('addNama').value);"><i class="fas fa-plus"></i>&ensp;Add</button>
             </div>
           </form>
         </div>
@@ -181,7 +212,8 @@
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
-        <form action="<?= base_url('admin/dataKategoriKategoriPelanggaranEdit'); ?>" method="post">
+        <form action="<?= base_url('admin/dataIndikatorPenilaianEdit'); ?>" method="post">
+          <input type="hidden" name="<?= $this->security->get_csrf_token_name(); ?>" value="<?= $this->security->get_csrf_hash(); ?>">
           <div class="modal-body">
 
             <input type="hidden" name="z" readonly value="<?= $pel->id ;?>"  class="form-control" >

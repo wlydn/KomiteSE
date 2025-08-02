@@ -52,7 +52,6 @@
               </li>
               <!-- Menu Footer-->
               <li class="user-footer">
-                <a href="<?= base_url('Admin/profile')?>" class="btn btn-info btn-sm"><i class="fas fa-user"></i>&ensp;Profile</a>
                 <a href="#" class="btn btn-danger float-right btn-sm" data-toggle="modal" data-target="#logOutModal" data-backdrop="static" data-keyboard="true"><i class="fas fa-sign-out-alt"></i>&ensp;Logout</a>
               </li>
             </ul>

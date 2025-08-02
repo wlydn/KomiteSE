@@ -36,7 +36,37 @@
               </div>
               <!--/. Col -->
             </div>
-          <?php endif ;?>             
+          <?php endif ;?>
+          
+          <?php if($this->session->flashdata('success')) : ?>
+            <!-- Success Message -->
+            <div class="row">
+              <div class="col-12">
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                  <h5><i class="fas fa-check"></i> Success:</h5>
+                  <?= $this->session->flashdata('success'); ?>
+                  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          <?php endif ;?>
+          
+          <?php if($this->session->flashdata('error')) : ?>
+            <!-- Error Message -->
+            <div class="row">
+              <div class="col-12">
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                  <h5><i class="fas fa-exclamation-triangle"></i> Error:</h5>
+                  <?= $this->session->flashdata('error'); ?>
+                  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          <?php endif ;?>
         </div><!-- /.container-fluid -->
       </div>
       <!-- /.content-header -->
@@ -49,7 +79,7 @@
           <div class="card card-outline card-info">
             <div class="card-header">
               <h4 class="card-title " text-align="center"><strong><?= $page; ?></strong></h4>
-              <a class="btn btn-sm btn-outline-info float-right" href="<?= base_url('Admin/listPenilaianAdd')?>">
+              <a class="btn btn-sm btn-outline-info float-right" href="<?= base_url('Admin/dataListPenilaianAdd')?>">
                 <i class="fas fa-plus"></i> Add Data
               </a>
             </div>
