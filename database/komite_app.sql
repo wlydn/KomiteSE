@@ -11,7 +11,7 @@
  Target Server Version : 100432 (10.4.32-MariaDB)
  File Encoding         : 65001
 
- Date: 05/08/2025 13:11:38
+ Date: 05/08/2025 16:38:31
 */
 
 SET NAMES utf8mb4;
@@ -78,7 +78,7 @@ CREATE TABLE `pegawai`  (
   INDEX `kode_resiko`(`kode_resiko` ASC) USING BTREE,
   INDEX `nik_2`(`nik` ASC) USING BTREE,
   INDEX `id`(`id` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 137328 CHARACTER SET = latin1 COLLATE = latin1_swedish_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 202508002 CHARACTER SET = latin1 COLLATE = latin1_swedish_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of pegawai
@@ -411,6 +411,10 @@ INSERT INTO `pegawai` VALUES (325, '202507008', 'Richa Nur Afifah I, S.Tr.Kes', 
 INSERT INTO `pegawai` VALUES (326, '202507009', 'Namira Mutia Khanza, S.Kes', 'Wanita', 'Fisioterapis', 'Staff / Pelaksana', '-', '-', '-', 'UMUM', 'Medis', 'WP BE', 'PKW', '-', 'S1 PERAWAT', 'Bengkulu', '0000-00-00', 'Dusun Kebondanas RT 13/02 Kebondanas, Pusakajaya', 'Subang', '0000-00-00', '<1', '-', 'BSI', '-', 'AKTIF', 26, '0000-00-00', '-');
 INSERT INTO `pegawai` VALUES (327, '202507010', 'Dian Asri Utami, A.Md.Kep', 'Wanita', 'Perawat', 'Staff / Pelaksana', '-', '-', '-', 'Intensive Care Unit', 'MEDIK & KEPERAW', 'WP Ka', 'PKW', '-', 'D3 PERAWAT', 'Cilacap', '0000-00-00', 'Komplek Cendrawasih No.12 RT 15/5 Kalijati Barat', 'Subang', '0000-00-00', '<1', '-', 'BSI', '-', 'AKTIF', 26, '0000-00-00', '-');
 INSERT INTO `pegawai` VALUES (328, '202507011', 'Ns. Mila Seana, S.Kep', 'Wanita', 'Perawat', 'Staff / Pelaksana', '-', '-', '-', 'Rawat Inap Kencana 2', 'MEDIK & KEPERAW', 'WP BE', 'PKW', '-', 'S1 PROFESI PERAWAT', 'Subang', '0000-00-00', 'Jl. Cigiringsing No.7A RT 6/4 Pasir Endah,Ujungber', 'Bandung', '0000-00-00', '<1', '-', 'BSI', '-', 'AKTIF', 26, '0000-00-00', '-');
+INSERT INTO `pegawai` VALUES (329, '202508001', 'Tedi Sidik Permana, A.Md.Kes', 'Pria', 'ATLM', 'Staff / Pelaksana', '-', '-', '-', 'Laboratorium', 'Penunjang Medis', 'WP BE', 'PKW', '-', 'D3 ANALIS KESEHATAN', 'Bandung', '0000-00-00', 'Jl. Babakan Loa RT3/3 Pasirkaliki, Cimahi Utara', 'Cimahi', '0000-00-00', '<1', '-', 'BSI', '-', 'AKTIF', 26, '0000-00-00', '-');
+INSERT INTO `pegawai` VALUES (330, '202508002', 'Maruli Tua Hutagalung, A,Md.Rad', 'Pria', 'Radiografer', 'Staff / Pelaksana', '-', '-', '-', 'Radiologi', 'Penunjang Medis', 'WP Ka', 'PKW', '-', 'D3 RADIOLOGI', 'Semarang', '0000-00-00', 'Jl. Duku I No.24 RT3/8 Tegal Reja, Cilacap Selatan', 'Cilacap', '0000-00-00', '<1', '-', 'BSI', '-', 'AKTIF', 26, '0000-00-00', '-');
+INSERT INTO `pegawai` VALUES (331, '202508003', 'Rizaldi Bahtiar, A.Md.Kes', 'Pria', 'Radiologi', 'Staff / Pelaksana', '-', '-', '-', 'Radiologi', 'Penunjang Medis', '-', 'PKW', '-', '-', 'Bekasi', '0000-00-00', 'Perum Mutiara Bekasi Jaya Blk.K-7 No.6 Rt4/8 Sinda', 'Bekasi', '0000-00-00', '<1', '-', 'BSI', '-', 'AKTIF', 26, '0000-00-00', '-');
+INSERT INTO `pegawai` VALUES (202508001, 'Tedi Sidik Permana, ', 'Pria', '', 'Staff / Pelaksana', '-', '', '', 'Lab', 'Penunjang Medis', '-', '-', 'WP', 'PKWT', '-', 'D3 ANALIS KESEHATAN', '0000-00-00', '23 07 2003', 'Jl. Babakan Loa RT3/', '0000-00-00', '', '<1', '-', 'BSI', '', 0, '0000-00-00', '1 08 2025');
 
 -- ----------------------------
 -- Table structure for tb_indikator
@@ -471,15 +475,13 @@ CREATE TABLE `tb_penilaian`  (
   CONSTRAINT `tb_penilaian_ibfk_2` FOREIGN KEY (`indikator_id`) REFERENCES `tb_indikator` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `tb_penilaian_ibfk_4` FOREIGN KEY (`pegawai_id`) REFERENCES `pegawai` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `tb_penilaian_ibfk_5` FOREIGN KEY (`user_id`) REFERENCES `tb_users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE = InnoDB AUTO_INCREMENT = 114 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 115 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of tb_penilaian
 -- ----------------------------
 INSERT INTO `tb_penilaian` VALUES (108, 4, 163, 3, 'Terlambat 14 menit', '2025-08-02');
 INSERT INTO `tb_penilaian` VALUES (109, 4, 1, 4, 'Tidak ada surat dokter', '2025-08-26');
-INSERT INTO `tb_penilaian` VALUES (112, 4, 15, 13, '6', '2025-08-05');
-INSERT INTO `tb_penilaian` VALUES (113, 4, 91, 18, '6sf', '2025-08-08');
 
 -- ----------------------------
 -- Table structure for tb_users
@@ -498,7 +500,7 @@ CREATE TABLE `tb_users`  (
   INDEX `pegawai_id`(`pegawai_id` ASC) USING BTREE,
   CONSTRAINT `tb_users_ibfk_1` FOREIGN KEY (`username`) REFERENCES `pegawai` (`nik`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `tb_users_ibfk_2` FOREIGN KEY (`pegawai_id`) REFERENCES `pegawai` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE = InnoDB AUTO_INCREMENT = 30 CHARACTER SET = latin1 COLLATE = latin1_swedish_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 31 CHARACTER SET = latin1 COLLATE = latin1_swedish_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of tb_users
@@ -507,5 +509,6 @@ INSERT INTO `tb_users` VALUES (1, 320, '202507003', '$2y$10$AaM911mMy7ERRkxc0Q/i
 INSERT INTO `tb_users` VALUES (2, 15, '202111026', '$2y$10$WsThZD8UcachHlsz9wDoMOI/G2eBuQ9FC8x0HZH0mdK3WdEs9qzHW', 'User', 1, '');
 INSERT INTO `tb_users` VALUES (3, 19, '202111017', '$2y$10$fGbt.zcG9YcQ7DPCLrtDsOY/XKjuCC2Hz8b/nAJK1SV5.qJ/WGWnS', 'User', 1, '');
 INSERT INTO `tb_users` VALUES (4, 226, '202408011', '$2y$10$xQEpztTOcBz2uK5EN6xmqO7a7xnbB5Q3/laPpAKMpmiPhbqZ0UpVa', 'User', 1, '');
+INSERT INTO `tb_users` VALUES (30, 318, '202507001', '$2y$10$sNuBQ..918POF7IfFJfDgO5vrYePb2GvyH6uDaf0SpbWakfVwTBOu', 'Admin', 1, '');
 
 SET FOREIGN_KEY_CHECKS = 1;
