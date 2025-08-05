@@ -4,13 +4,13 @@
             <div class="container-fluid">
               <div class="row mb-2">
                 <div class="col-sm-6">
-                  <h1 class="m-0 text-dark"><?= $page ;?></h1>
+                  <h1 class="m-0 text-dark"><?= htmlspecialchars($page, ENT_QUOTES, 'UTF-8') ;?></h1>
                 </div><!-- /.col -->
                 <div class="col-sm-6">
                   <ol class="breadcrumb float-sm-right">
-                    <li class="breadcrumb-item"><small><?= $this->session->userdata('level') ;?></small></li>
-                    <li class="breadcrumb-item"><a href="<?= base_url('User/listPenilaian');?>"><small><?= $parent ;?></small></a></li>
-                    <li class="breadcrumb-item"><a href="<?= base_url('User/listPenilaianEdit/'.$this->encrypt->encode($onepel->id_penilaian));?>"><small><?= $page ;?></small></a></li>
+                    <li class="breadcrumb-item"><small><?= htmlspecialchars($this->session->userdata('level'), ENT_QUOTES, 'UTF-8') ;?></small></li>
+                    <li class="breadcrumb-item"><a href="<?= base_url('User/listPenilaian');?>"><small><?= htmlspecialchars($parent, ENT_QUOTES, 'UTF-8') ;?></small></a></li>
+                    <li class="breadcrumb-item"><a href="<?= base_url('User/listPenilaianEdit/'.$this->encrypt->encode($onepel->id_penilaian));?>"><small><?= htmlspecialchars($page, ENT_QUOTES, 'UTF-8') ;?></small></a></li>
                   </ol>
                 </div><!-- /.col -->
               </div><!-- /.row -->
@@ -48,7 +48,7 @@
               <!-- Default box -->
               <div class="card card-outline card-info">
                 <div class="card-header">
-                  <h4 class="card-title " text-align="center"><strong><?= $page; ?></strong></h4>
+                  <h4 class="card-title " text-align="center"><strong><?= htmlspecialchars($page, ENT_QUOTES, 'UTF-8'); ?></strong></h4>
                   <a class="btn btn-secondary btn-sm float-right" href="<?php echo base_url('User/listPenilaian');?>">
                     <i class="fas fa-arrow-left"></i>&ensp;Back
                   </a>
@@ -57,7 +57,7 @@
 
                   <form action="<?= base_url('User/listPenilaianEdit/'.$this->encrypt->encode($onepel->id_penilaian).'')?>" method="post">
                     <input type="hidden" name="<?= $this->security->get_csrf_token_name(); ?>" value="<?= $this->security->get_csrf_hash(); ?>">
-                    <input type="hidden" name="z" value="<?= $onepel->id_penilaian ;?>">
+                    <input type="hidden" name="z" value="<?= htmlspecialchars($onepel->id_penilaian, ENT_QUOTES, 'UTF-8') ;?>">
 
                     <div class="row ">
 
@@ -69,8 +69,8 @@
                           <select id="karyawan" name="karyawan" class="form-control select2" style="width: 100%;">
                             <option value="">Pilih Karyawan</option>
                             <?php foreach($userAll as $karyawan): ?>
-                              <option value="<?= $karyawan->id ?>" <?= (isset($onepel->pegawai_id) && $onepel->pegawai_id == $karyawan->id) ? 'selected' : '' ?>>
-                                <?= $karyawan->nama ?>
+                              <option value="<?= htmlspecialchars($karyawan->id, ENT_QUOTES, 'UTF-8') ?>" <?= (isset($onepel->pegawai_id) && $onepel->pegawai_id == $karyawan->id) ? 'selected' : '' ?>>
+                                <?= htmlspecialchars($karyawan->nama, ENT_QUOTES, 'UTF-8') ?>
                               </option>
                             <?php endforeach; ?>
                           </select>
@@ -87,8 +87,8 @@
                           <select id="indikatorPenilaian" name="indikatorPenilaian" class="form-control select2" style="width: 100%;">
                             <option value="">Pilih Indikator</option>
                             <?php foreach($pelanggaranAll as $indikator): ?>
-                              <option value="<?= $indikator->id ?>" <?= (isset($onepel->indikator_id) && $onepel->indikator_id == $indikator->id) ? 'selected' : '' ?>>
-                                <?= $indikator->violation_name ?>
+                              <option value="<?= htmlspecialchars($indikator->id, ENT_QUOTES, 'UTF-8') ?>" <?= (isset($onepel->indikator_id) && $onepel->indikator_id == $indikator->id) ? 'selected' : '' ?>>
+                                <?= htmlspecialchars($indikator->violation_name, ENT_QUOTES, 'UTF-8') ?>
                               </option>
                             <?php endforeach; ?>
                           </select>
@@ -104,7 +104,7 @@
                     <!-- Tanggal Penilaian -->
                     <div class="form-group">
                       <label for="tanggalPenilaian" class="col-form-label">Tanggal Penilaian</label>
-                      <input type="date" name="tanggalPenilaian" class="form-control" id="tanggalPenilaian" value="<?= isset($onepel->date) ? $onepel->date : date('Y-m-d') ?>">
+                      <input type="date" name="tanggalPenilaian" class="form-control" id="tanggalPenilaian" value="<?= htmlspecialchars(isset($onepel->date) ? $onepel->date : date('Y-m-d'), ENT_QUOTES, 'UTF-8') ?>">
                       <?= form_error('tanggalPenilaian', '<small class="text-danger pl-3">', '</small>');?>
                     </div>
                     <!-- / Tanggal Penilaian -->

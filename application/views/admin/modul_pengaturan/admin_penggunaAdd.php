@@ -4,13 +4,13 @@
     <div class="container-fluid">
       <div class="row mb-2">
         <div class="col-sm-6">
-          <h1 class="m-0 text-dark"><?= $page ;?></h1>
+          <h1 class="m-0 text-dark"><?= htmlspecialchars($page, ENT_QUOTES, 'UTF-8') ;?></h1>
         </div><!-- /.col -->
         <div class="col-sm-6">
           <ol class="breadcrumb float-sm-right">
             <li class="breadcrumb-item"><small>Admin</small></li>
-            <li class="breadcrumb-item"><a href="<?= base_url('admin/pengaturanPengguna');?>"><small><?= $parent ;?></small></a></li>
-            <li class="breadcrumb-item"><a href="<?= base_url('admin/pengaturanPenggunaAdd');?>"><small><?= $page ;?></small></a></li>
+            <li class="breadcrumb-item"><a href="<?= base_url('admin/pengaturanPengguna');?>"><small><?= htmlspecialchars($parent, ENT_QUOTES, 'UTF-8') ;?></small></a></li>
+            <li class="breadcrumb-item"><a href="<?= base_url('admin/pengaturanPenggunaAdd');?>"><small><?= htmlspecialchars($page, ENT_QUOTES, 'UTF-8') ;?></small></a></li>
           </ol>
         </div><!-- /.col -->
       </div><!-- /.row -->
@@ -52,7 +52,7 @@
           <!-- Default box -->
           <div class="card card-outline card-info">
             <div class="card-header">
-              <h4 class="card-title " text-align="center"><strong><?= $page; ?></strong></h4>
+              <h4 class="card-title " text-align="center"><strong><?= htmlspecialchars($page, ENT_QUOTES, 'UTF-8'); ?></strong></h4>
               <a class="btn btn-secondary btn-sm float-right" href="<?php echo base_url('Admin/pengaturanPengguna');?>">
                 <i class="fas fa-arrow-left"></i>&ensp;Back
               </a>
@@ -86,7 +86,7 @@
                       <option value="">Tulis NIK / Nama Karyawan</option>
                       <?php
                       foreach ($userAll as $user) {
-                        echo '<option value="'.$user->id.'" data-nik="'.$user->nik.'" data-nama="'.$user->nama.'">'.$user->nik.' / '. $user->nama .'</option>';
+                        echo '<option value="'.htmlspecialchars($user->id, ENT_QUOTES, 'UTF-8').'" data-nik="'.htmlspecialchars($user->nik, ENT_QUOTES, 'UTF-8').'" data-nama="'.htmlspecialchars($user->nama, ENT_QUOTES, 'UTF-8').'">'.htmlspecialchars($user->nik, ENT_QUOTES, 'UTF-8').' / '. htmlspecialchars($user->nama, ENT_QUOTES, 'UTF-8') .'</option>';
                       }
                       ;?>
                     </select>
@@ -111,7 +111,7 @@
                   <!-- Password -->
                   <div class="form-group">
                     <label for="addPenggunaPasswordAdmin" class="col-form-label">Password</label>
-                    <input type="password" name="passwordAdmin" class="form-control" id="addPenggunaPasswordAdmin" placeholder="Password" value="<?= set_value('password')?>" />
+                    <input type="password" name="passwordAdmin" class="form-control" id="addPenggunaPasswordAdmin" placeholder="Password" value="<?= htmlspecialchars(set_value('password'), ENT_QUOTES, 'UTF-8')?>" />
                     <?= form_error('passwordAdmin', '<small class="text-danger pl-3">', '</small>');?>
                   </div>
                   <!-- / Password -->
@@ -127,7 +127,7 @@
                       <option value="">Tulis NIK / Nama Karyawan</option>
                       <?php
                       foreach ($userAll as $user) {
-                        echo '<option value="'.$user->id.'" data-nik="'.$user->nik.'" data-nama="'.$user->nama.'">'.$user->nik.' / '. $user->nama .'</option>';
+                        echo '<option value="'.htmlspecialchars($user->id, ENT_QUOTES, 'UTF-8').'" data-nik="'.htmlspecialchars($user->nik, ENT_QUOTES, 'UTF-8').'" data-nama="'.htmlspecialchars($user->nama, ENT_QUOTES, 'UTF-8').'">'.htmlspecialchars($user->nik, ENT_QUOTES, 'UTF-8').' / '. htmlspecialchars($user->nama, ENT_QUOTES, 'UTF-8') .'</option>';
                       }
                       ;?>
                     </select>
@@ -152,7 +152,7 @@
                   <!-- Password -->
                   <div class="form-group">
                     <label for="addPenggunaPasswordUser" class="col-form-label">Password</label>
-                    <input type="password" name="passwordUser" class="form-control" id="addPenggunaPasswordUser" placeholder="Password" value="<?= set_value('password')?>" />
+                    <input type="password" name="passwordUser" class="form-control" id="addPenggunaPasswordUser" placeholder="Password" value="<?= htmlspecialchars(set_value('password'), ENT_QUOTES, 'UTF-8')?>" />
                     <?= form_error('passwordUser', '<small class="text-danger pl-3">', '</small>');?>
                   </div>
                   <!-- / Password -->

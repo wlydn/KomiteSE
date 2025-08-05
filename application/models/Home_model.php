@@ -6,13 +6,4 @@ class Home_model extends CI_Model {
 		parent::__construct();
 		$this->load->database();
 	}
-
-
-	public function website(){
-
-		$query = "SELECT * FROM tb_website";
-		return $this->db->query($query)->row()->school_name;
-
-
-	}
 }

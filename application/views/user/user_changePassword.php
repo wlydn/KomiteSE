@@ -4,12 +4,12 @@
     <div class="container-fluid">
       <div class="row mb-2">
         <div class="col-sm-6">
-          <h1 class="m-0 text-dark"><?= $page ;?></h1>
+          <h1 class="m-0 text-dark"><?= htmlspecialchars($page, ENT_QUOTES, 'UTF-8') ;?></h1>
         </div><!-- /.col -->
         <div class="col-sm-6">
           <ol class="breadcrumb float-sm-right">
-            <li class="breadcrumb-item"><small><?= $this->session->userdata('level') ;?></small></li>
-            <li class="breadcrumb-item"><a href="<?= base_url('User/pengaturanUserEdit')?>"><small><?= $page ;?></small></a></li>
+            <li class="breadcrumb-item"><small><?= htmlspecialchars($this->session->userdata('level'), ENT_QUOTES, 'UTF-8') ;?></small></li>
+            <li class="breadcrumb-item"><a href="<?= base_url('User/pengaturanUserEdit')?>"><small><?= htmlspecialchars($page, ENT_QUOTES, 'UTF-8') ;?></small></a></li>
           </ol>
         </div><!-- /.col -->
       </div><!-- /.row -->
@@ -19,6 +19,15 @@
 
   <!-- Main content -->
   <section class="content">
+    <div class="container-fluid">
+      <?php if($this->session->flashdata('success')) : ?>
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+          <?= $this->session->flashdata('success'); ?>
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+      <?php endif; ?>
     <div class="container-fluid">
       <div class="row">
         <div class="col-md-6">
@@ -34,17 +43,17 @@
             <form action="<?= base_url('User/updatePassword');?>" method="post">
               <input type="hidden" name="<?= $this->security->get_csrf_token_name(); ?>" value="<?= $this->security->get_csrf_hash(); ?>">
               <div class="card-body">
-                <input type="hidden" name="user_id" value="<?= $user->id;?>">
+                <input type="hidden" name="user_id" value="<?= htmlspecialchars($user->id, ENT_QUOTES, 'UTF-8');?>">
                 
                 <div class="form-group">
                   <label for="new_password">Password Baru</label>
-                  <input type="password" name="new_password" class="form-control <?= (form_error('new_password')) ? 'is-invalid' : '' ?>" id="new_password" placeholder="Masukkan password baru" value="<?= set_value('new_password')?>">
+                  <input type="password" name="new_password" class="form-control <?= (form_error('new_password')) ? 'is-invalid' : '' ?>" id="new_password" placeholder="Masukkan password baru" value="<?= htmlspecialchars(set_value('new_password'), ENT_QUOTES, 'UTF-8')?>">
                   <?= form_error('new_password', '<small class="text-danger pl-3">', '</small>');?>
                 </div>
                 
                 <div class="form-group">
                   <label for="repeat_password">Konfirmasi Password</label>
-                  <input type="password" name="repeat_password" class="form-control <?= (form_error('repeat_password')) ? 'is-invalid' : '' ?>" id="repeat_password" placeholder="Konfirmasi password baru" value="<?= set_value('repeat_password')?>">
+                  <input type="password" name="repeat_password" class="form-control <?= (form_error('repeat_password')) ? 'is-invalid' : '' ?>" id="repeat_password" placeholder="Konfirmasi password baru" value="<?= htmlspecialchars(set_value('repeat_password'), ENT_QUOTES, 'UTF-8')?>">
                   <?= form_error('repeat_password', '<small class="text-danger pl-3">', '</small>');?>
                   <div id="password-match-info" class="mt-2" style="display: none;">
                     <small id="password-match-text" class="text-danger">

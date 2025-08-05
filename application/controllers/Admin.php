@@ -1,6 +1,18 @@
 <?php
 defined('BASEPATH') or exit('No direct script access allowed');
 date_default_timezone_set('Asia/Jakarta');
+
+/**
+ * @property Admin_model $admin_model
+ * @property CI_Form_validation $form_validation
+ * @property CI_Input $input
+ * @property CI_Session $session
+ * @property CI_DB_query_builder $db
+ * @property CI_Encrypt $encrypt
+ * @property Sweetalert $sweetalert
+ * @property CI_URI $uri
+ * @property CI_Security $security
+ */
 class Admin extends MY_Controller
 {
 
@@ -9,7 +21,7 @@ class Admin extends MY_Controller
 
 		parent::__construct();
 		/*-- Check Session  --*/
-		is_login();
+		is_login('Admin');
 		/*-- untuk mengatasi error confirm form resubmission  --*/
 		header('Cache-Control: no-cache, must-revalidate, max-age=0');
 		header('Cache-Control: post-check=0, pre-check=0', false);
@@ -32,7 +44,7 @@ class Admin extends MY_Controller
 		$data['ttlPenilaianMingguan'] = $this->admin_model->getCountPenilaianMingguan();
 		$data['ttlPenilaianBulanan'] = $this->admin_model->getCountPenilaianBulanan();
 
-		$data['murid'] = $this->admin_model->TopMurid();
+		$data['murid'] = $this->admin_model->TopKrywn();
 		$data['pelanggaran'] = $this->admin_model->TopPelanggaran();
 
 		// Title sudah di-set otomatis di MY_Controller
@@ -47,19 +59,16 @@ class Admin extends MY_Controller
 		if (count($this->uri->segment_array()) > 3) {
 			redirect('Admin');
 		}
-		if (!isset($id)) {
-			redirect('Admin');
-		}
-		if (is_numeric($id)) {
+		$decoded_id = $this->encrypt->decode($id);
+		if (!isset($id) || !validate_id($decoded_id)) {
 			redirect('Admin');
 		}
 
 		$data['user'] = get_user_data();
 
-		$data['onePelanggaranAll'] = $this->admin_model->getOnePelanggaranByID($this->encrypt->decode($id));
-		$data['oneSiswa'] = $this->admin_model->getOneSiswa($this->encrypt->decode($id));
-		$data['pelanggaranTotal'] = $this->admin_model->getCountPelanggaran($this->encrypt->decode($id));
-		$data['pelanggaran'] = $this->admin_model->getPelanggaranByID($this->encrypt->decode($id));
+		$data['onePelanggaranAll'] = $this->admin_model->getPelanggaranByID($decoded_id, true);
+		$data['pelanggaranTotal'] = $this->admin_model->getCountPelanggaran($decoded_id);
+		$data['pelanggaran'] = $this->admin_model->getPelanggaranByID($decoded_id);
 
 		// Title sudah di-set otomatis di MY_Controller
 		$data['parent'] = "Dashboard";
@@ -77,7 +86,7 @@ class Admin extends MY_Controller
 		$this->db->where('tb_users.username', $this->session->userdata('username'));
 		$data['user'] = $this->db->get()->row();
 
-		$data['tipePelanggaran'] = $this->admin_model->getKategoriPelanggaran();
+		$data['tipePelanggaran'] = $this->admin_model->getIndikatorPenilaian();
 
 		// Title sudah di-set otomatis di MY_Controller
 		$data['parent'] = "Data Kategori";
@@ -87,53 +96,38 @@ class Admin extends MY_Controller
 
 	public function dataIndikatorPenilaianAdd()
 	{
-		try {
-			// Check if this is a POST request (form submission)
-			if ($this->input->method() === 'post') {
+		$this->form_validation->set_rules('code', 'Code', 'required|trim|htmlspecialchars');
+		$this->form_validation->set_rules('nama', 'Nama Indikator', 'required|trim|htmlspecialchars');
 
-				// Get POST data
-				$code = $this->input->post('code');
-				$nama = $this->input->post('nama');
+		if ($this->form_validation->run() == false) {
+			$this->db->select('pegawai.nama as nama_pegawai, pegawai.jk as jenis_kelamin');
+			$this->db->from('tb_users');
+			$this->db->join('pegawai', 'tb_users.username = pegawai.nik', 'left');
+			$this->db->where('tb_users.username', $this->session->userdata('username'));
+			$data['user'] = $this->db->get()->row();
 
-				// Simple validation
-				if (empty($code) || empty($nama)) {
-					$this->session->set_flashdata('error', 'Code dan Nama Indikator harus diisi!');
-					redirect('Admin/dataIndikatorPenilaian');
-					return;
-				}
+			$data['tipePelanggaran'] = $this->admin_model->getIndikatorPenilaian();
+			$data['parent'] = "Data Kategori";
+			$data['page'] = "Indikator Penilaian";
+			$this->load_template('admin/layout/admin_template', 'admin/modul_dataKategori/admin_indikatorPenilaian', $data);
+		} else {
+			$code = $this->input->post('code');
+			$nama = $this->input->post('nama');
 
-				// Prepare insert data
-				$insert_data = [
-					'code' => trim($code),
-					'violation_name' => trim($nama),
-					'get_point' => 1
-				];
+			$insert_data = [
+				'code' => $code,
+				'violation_name' => $nama,
+				'get_point' => 1
+			];
 
-				// Insert to database
-				$insert_result = $this->db->insert('tb_indikator', $insert_data);
+			$insert_result = $this->db->insert('tb_indikator', $insert_data);
 
-				if ($insert_result) {
-					$this->session->set_flashdata('success', 'Indikator Penilaian "' . $nama . '" berhasil ditambahkan!');
-				} else {
-					$this->session->set_flashdata('error', 'Gagal menyimpan data ke database!');
-				}
-
-				redirect('Admin/dataIndikatorPenilaian');
+			if ($insert_result) {
+				$this->session->set_flashdata('success', 'Indikator Penilaian "' . $nama . '" berhasil ditambahkan!');
 			} else {
-				// GET request - show the form
-				$this->db->select('pegawai.nama as nama_pegawai, pegawai.jk as jenis_kelamin');
-				$this->db->from('tb_users');
-				$this->db->join('pegawai', 'tb_users.username = pegawai.nik', 'left');
-				$this->db->where('tb_users.username', $this->session->userdata('username'));
-				$data['user'] = $this->db->get()->row();
-
-				$data['tipePelanggaran'] = $this->admin_model->getKategoriPelanggaran();
-				$data['parent'] = "Data Kategori";
-				$data['page'] = "Indikator Penilaian";
-				$this->load_template('admin/layout/admin_template', 'admin/modul_dataKategori/admin_indikatorPenilaian', $data);
+				$this->session->set_flashdata('error', 'Gagal menyimpan data ke database!');
 			}
-		} catch (Exception $e) {
-			$this->session->set_flashdata('error', 'Terjadi kesalahan: ' . $e->getMessage());
+
 			redirect('Admin/dataIndikatorPenilaian');
 		}
 	}
@@ -141,29 +135,20 @@ class Admin extends MY_Controller
 
 	public function dataIndikatorPenilaianEdit()
 	{
-
-		$data['user'] = $this->db->get_where('tb_users', ['username' => $this->session->userdata('username')])->row();
-
-		$data['tipePelanggaran'] = $this->admin_model->getKategoriPelanggaran();
-
-		$this->form_validation->set_rules('nama', 'Nama Kategori Pelanggaran', 'required');
-		$this->form_validation->set_rules('point', 'Jumlah Point', 'required|trim|is_natural', [
-			'is_natural' => 'Jumlah Point hanya berisi Angka'
-		]);
+		$this->form_validation->set_rules('nama', 'Nama Kategori Pelanggaran', 'required|trim|htmlspecialchars');
+		$this->form_validation->set_rules('point', 'Jumlah Point', 'required|trim|integer');
+		$this->form_validation->set_rules('z', 'ID', 'required|trim|integer');
 
 		if ($this->form_validation->run() == false) {
-
-			// Title sudah di-set otomatis di MY_Controller
+			$data['user'] = $this->db->get_where('tb_users', ['username' => $this->session->userdata('username')])->row();
+			$data['tipePelanggaran'] = $this->admin_model->getIndikatorPenilaian();
 			$data['parent'] = "Data Kategori";
 			$data['page'] = "Kategori Pelanggaran Edit";
 			$this->load_template('admin/layout/admin_template', 'admin/modul_dataKategori/admin_indikatorPenilaian', $data);
 		} else {
-
 			$data = [
-
-				'violation_name' => htmlspecialchars($this->input->post('nama')),
+				'violation_name' => $this->input->post('nama'),
 				'get_point' => $this->input->post('point')
-
 			];
 
 			$this->db->where('id', $this->input->post('z'));
@@ -270,167 +255,6 @@ class Admin extends MY_Controller
 		$this->load_template('admin/layout/admin_template', 'admin/modul_dataKategori/admin_listKaryawan', $data);
 	}
 
-	public function dataKategoriListPelanggaranAdd()
-	{
-
-		$data['user'] = $this->db->get_where('tb_users', ['username' => $this->session->userdata('username')])->row();
-
-
-		$data['userAll'] = $this->admin_model->getKaryawan();
-		$data['pelanggaranAll'] = $this->admin_model->getKategoriPelanggaran();
-
-		$this->form_validation->set_rules('kelas', 'Kelas', 'required');
-		$this->form_validation->set_rules('namaKelas', 'Nama Kelas', 'required');
-		$this->form_validation->set_rules('namaSiswa', 'Nama Siswa', 'required');
-		$this->form_validation->set_rules('pelapor', 'Pelapor', 'required');
-		$this->form_validation->set_rules('pelanggaran', 'Kategori Pelanggaran', 'required');
-		$this->form_validation->set_rules('catatan', 'Catatan', 'required');
-
-		if ($this->form_validation->run() == false) {
-
-			// Title sudah di-set otomatis di MY_Controller
-			$data['parent'] = "List Pelanggaran";
-			$data['page'] = "List Pelanggaran Add";
-			$this->load_template('admin/layout/admin_template', 'admin/modul_listPelanggaran/admin_listPelanggaranAdd', $data);
-		} else {
-
-			$data = [
-
-				'class_id' => $this->input->post('namaKelas'),
-				'teacher_id' => $this->input->post('pelapor'),
-				'student_id' => $this->input->post('namaSiswa'),
-				'nisn' => $this->admin_model->getOneSiswa($this->input->post('namaSiswa'))->nisn,
-				'wali_id' => $this->admin_model->getOneWali($this->input->post('namaSiswa'))->id,
-				'type_id' => $this->input->post('pelanggaran'),
-				'point' => $this->admin_model->getOneKategoriPelanggaran($this->input->post('pelanggaran'))->get_point,
-				'note' => $this->input->post('catatan'),
-				'reported_on' => date('Y-m-d H:i:s')
-
-			];
-
-
-			$kelasPoint = $this->db->get_where('tb_kelas', ['id' => $this->input->post('namaKelas')])->row()->total_poin;
-
-			$point = array($kelasPoint, $this->admin_model->getOneKategoriPelanggaran($this->input->post('pelanggaran'))->get_point);
-
-			$totalPoint = array_sum($point);
-
-			$data1 = [
-
-				'total_poin' => $totalPoint
-			];
-
-			$this->db->where('id', $this->input->post('namaKelas'));
-			$this->db->update('tb_kelas', $data1);
-
-			$this->sweetalert->success('Pelanggaran Siswa ' . $this->admin_model->getOneSiswa($this->input->post('namaSiswa'))->std_name . ' Telah Ditambahkan!');
-			redirect('Admin/dataKategoriListPelanggaran');
-		}
-	}
-
-	public function dataKategoriListPelanggaranPrint($id)
-	{
-
-		if (count($this->uri->segment_array()) > 3) {
-			redirect('Admin');
-		}
-		if (!isset($id)) {
-			redirect('Admin/dataKategoriListPelanggaran');
-		}
-		if (is_numeric($id)) {
-			redirect('Admin/dataKategoriListPelanggaran');
-		}
-
-		$data['user'] = $this->db->get_where('tb_users', ['username' => $this->session->userdata('username')])->row();
-		$data['oneWeb'] = $this->admin_model->getOneWebsite($this->session->userdata('school_name'));
-		$data['onepel'] = $this->admin_model->getOnePelanggaran($this->encrypt->decode($id)); /*-- Load One Data Administrator --*/
-		$data['oneSis'] = $this->admin_model->getOneSiswa($this->admin_model->getOnePelanggaran($this->encrypt->decode($id))->student_id);
-
-		$data['title'] = "List Pelanggaran Detail";
-		$data['page'] = "List Pelanggaran Detail";
-		$this->load->view('admin/modul_listPelanggaran/admin_listPelanggaranPrint', $data);
-	}
-
-
-	public function dataKategoriListPelanggaranDetail($id = null)
-	{
-
-		if (count($this->uri->segment_array()) > 3) {
-			redirect('Admin');
-		}
-		if (!isset($id)) {
-			redirect('Admin/dataKategoriListPelanggaran');
-		}
-		if (is_numeric($id)) {
-			redirect('Admin/dataKategoriListPelanggaran');
-		}
-
-		$data['user'] = $this->db->get_where('tb_users', ['username' => $this->session->userdata('username')])->row();
-
-		$data['onepel'] = $this->admin_model->getOnePelanggaran($this->encrypt->decode($id)); /*-- Load One Data Administrator --*/
-
-		// Title sudah di-set otomatis di MY_Controller
-		$data['parent'] = "List Pelanggaran";
-		$data['page'] = "List Pelanggaran Detail";
-		$this->load_template('admin/layout/admin_template', 'admin/modul_listPelanggaran/admin_listPelanggaranDetail', $data);
-	}
-
-
-	public function dataKategoriListPelanggaranEdit($id = null)
-	{
-
-		if (count($this->uri->segment_array()) > 3) {
-			redirect('Admin');
-		}
-		if (!isset($id)) {
-			redirect('Admin/dataKategoriListPelanggaran');
-		}
-		if (is_numeric($id)) {
-			redirect('Admin/dataKategoriListPelanggaran');
-		}
-
-		$data['user'] = $this->db->get_where('tb_users', ['username' => $this->session->userdata('username')])->row();
-
-		$data['onepel'] = $this->admin_model->getOnePelanggaran($this->encrypt->decode($id)); /*-- Load One Data Administrator --*/
-		$data['pelanggaranAll'] = $this->admin_model->getKategoriPelanggaran();
-		$data['userAll'] = $this->admin_model->getKaryawan();
-
-		$this->form_validation->set_rules('kelas', 'Kelas', 'required');
-		$this->form_validation->set_rules('namaKelas', 'Nama Kelas', 'required');
-		$this->form_validation->set_rules('namaSiswa', 'Nama Siswa', 'required');
-		$this->form_validation->set_rules('pelapor', 'Pelapor', 'required');
-		$this->form_validation->set_rules('pelanggaran', 'Kategori Pelanggaran', 'required');
-		$this->form_validation->set_rules('catatan', 'Catatan', 'required');
-
-		if ($this->form_validation->run() == false) {
-
-			// Title sudah di-set otomatis di MY_Controller
-			$data['parent'] = "List Pelanggaran";
-			$data['page'] = "List Pelanggaran Edit";
-			$this->load_template('admin/layout/admin_template', 'admin/modul_listPelanggaran/admin_listPelanggaranEdit', $data);
-		} else {
-
-			$data = [
-
-				'class_id' => $this->input->post('namaKelas'),
-				'teacher_id' => $this->input->post('pelapor'),
-				'student_id' => $this->input->post('namaSiswa'),
-				'nisn' => $this->admin_model->getOneSiswa($this->input->post('namaSiswa'))->nisn,
-				'wali_id' => $this->admin_model->getOneWali($this->input->post('namaSiswa'))->id,
-				'type_id' => $this->input->post('pelanggaran'),
-				'point' => $this->admin_model->getOneKategoriPelanggaran($this->input->post('pelanggaran'))->get_point,
-				'note' => $this->input->post('catatan'),
-				'reported_on' => date('Y-m-d H:i:s')
-
-			];
-
-			$this->db->where('id', $this->input->post('z'));
-			$this->db->update('tb_pelanggaran', $data);
-			$this->sweetalert->success('List Pelanggarn Data Siswa  ' . $this->input->post('namaSiswa') . ' Telah Di Update!');
-			redirect('Admin/dataKategoriListPelanggaran');
-		}
-	}
-
 	public function pengaturanPengguna()
 	{
 
@@ -462,17 +286,17 @@ class Admin extends MY_Controller
 
 		if ($this->input->post('level') == 'Admin') {
 
-			$this->form_validation->set_rules('addNIKAdmin', 'NIK Pegawai', 'required');
-			$this->form_validation->set_rules('fullnameAdmin', 'FullName', 'required');
-			$this->form_validation->set_rules('usernameAdmin', 'Username', 'required|is_unique[tb_users.username]', [
+			$this->form_validation->set_rules('addNIKAdmin', 'NIK Pegawai', 'required|integer');
+			$this->form_validation->set_rules('fullnameAdmin', 'FullName', 'required|trim|htmlspecialchars');
+			$this->form_validation->set_rules('usernameAdmin', 'Username', 'required|is_unique[tb_users.username]|trim|htmlspecialchars', [
 				'is_unique' => 'Username Sudah Dipakai!'
 			]);
 			$this->form_validation->set_rules('passwordAdmin', 'Password', 'required');
 		} elseif ($this->input->post('level') == 'User') {
 
-			$this->form_validation->set_rules('addNIKUser', 'NIK Pegawai', 'required');
-			$this->form_validation->set_rules('fullnameUser', 'FullName', 'required');
-			$this->form_validation->set_rules('usernameUser', 'Username', 'required|is_unique[tb_users.username]', [
+			$this->form_validation->set_rules('addNIKUser', 'NIK Pegawai', 'required|integer');
+			$this->form_validation->set_rules('fullnameUser', 'FullName', 'required|trim|htmlspecialchars');
+			$this->form_validation->set_rules('usernameUser', 'Username', 'required|is_unique[tb_users.username]|trim|htmlspecialchars', [
 				'is_unique' => 'Username Sudah Dipakai!'
 			]);
 			$this->form_validation->set_rules('passwordUser', 'Password', 'required');
@@ -528,10 +352,8 @@ class Admin extends MY_Controller
 		if (count($this->uri->segment_array()) > 3) {
 			redirect('Admin');
 		}
-		if (!isset($id)) {
-			redirect('Admin/pengaturanPengguna');
-		}
-		if (is_numeric($id)) {
+		$decoded_id = $this->encrypt->decode($id);
+		if (!isset($id) || !validate_id($decoded_id)) {
 			redirect('Admin/pengaturanPengguna');
 		}
 
@@ -541,7 +363,7 @@ class Admin extends MY_Controller
 		$this->db->where('tb_users.username', $this->session->userdata('username'));
 		$data['user'] = $this->db->get()->row();
 
-		$data['oneUsers'] = $this->admin_model->getOneUsers($this->encrypt->decode($id)); /*-- Load One Data Administrator --*/
+		$data['oneUsers'] = $this->admin_model->getOneUsers($decoded_id); /*-- Load One Data Administrator --*/
 		$this->form_validation->set_rules('level', 'Level', 'required');
 
 		// Add password validation only if password is provided
@@ -712,7 +534,7 @@ class Admin extends MY_Controller
 
 		// Get all penilaian data
 		$data['penilaianAll'] = $this->admin_model->getPenilaian();
-		$data['tipePenilaian'] = $this->admin_model->getKategoriPenilaian();
+		$data['tipePenilaian'] = $this->admin_model->getIndikatorPenilaian();
 
 		// Get unique units for filter dropdown
 		$this->db->distinct();
@@ -741,7 +563,7 @@ class Admin extends MY_Controller
 
 		// Get all penilaian data
 		$data['penilaianAll'] = $this->admin_model->getPenilaian();
-		$data['tipePenilaian'] = $this->admin_model->getKategoriPenilaian();
+		$data['tipePenilaian'] = $this->admin_model->getIndikatorPenilaian();
 
 		// Get unique units for filter dropdown
 		$this->db->distinct();
@@ -772,11 +594,11 @@ class Admin extends MY_Controller
 		$data['karyawanAll'] = $this->admin_model->getKaryawan();
 		$data['indikatorPenilaianAll'] = $this->admin_model->getIndikatorPenilaian();
 
-		$this->form_validation->set_rules('karyawan', 'Nama Karyawan', 'required');
-		$this->form_validation->set_rules('indikatorPenilaian', 'Indikator Penilaian', 'required');
-		$this->form_validation->set_rules('pelapor', 'Pelapor', 'required');
+		$this->form_validation->set_rules('karyawan', 'Nama Karyawan', 'required|integer');
+		$this->form_validation->set_rules('indikatorPenilaian', 'Indikator Penilaian', 'required|integer');
+		$this->form_validation->set_rules('pelapor', 'Pelapor', 'required|trim|htmlspecialchars');
 		$this->form_validation->set_rules('tanggalPelaporan', 'Tanggal Pelaporan', 'required');
-		$this->form_validation->set_rules('catatanPenilaian', 'Catatan Penilaian', 'required');
+		$this->form_validation->set_rules('catatanPenilaian', 'Catatan Penilaian', 'required|trim|htmlspecialchars');
 
 		if ($this->form_validation->run() == false) {
 
@@ -797,20 +619,17 @@ class Admin extends MY_Controller
 
 			$this->sweetalert->success('Penilaian untuk karyawan berhasil ditambahkan!');
 			redirect('Admin/dataListPenilaian');
-
 		}
 	}
 
-	public function dataListPenilaianEdit($id = null)
+	public function listPenilaianEdit($id = null)
 	{
 
 		if (count($this->uri->segment_array()) > 3) {
 			redirect('Admin');
 		}
-		if (!isset($id)) {
-			redirect('Admin/dataListPenilaian');
-		}
-		if (is_numeric($id)) {
+		$decoded_id = $this->encrypt->decode($id);
+		if (!isset($id) || !validate_id($decoded_id)) {
 			redirect('Admin/dataListPenilaian');
 		}
 
@@ -820,20 +639,26 @@ class Admin extends MY_Controller
 		$this->db->where('tb_users.username', $this->session->userdata('username'));
 		$data['user'] = $this->db->get()->row();
 
-		$data['onepel'] = $this->admin_model->getOnePelanggaran($this->encrypt->decode($id));
+		// Get penilaian data with reporter information
+		$this->db->select('tb_penilaian.*, reporter_pegawai.nama as pelapor_nama');
+		$this->db->from('tb_penilaian');
+		$this->db->join('tb_users as reporter_users', 'tb_penilaian.user_id = reporter_users.id', 'left');
+		$this->db->join('pegawai as reporter_pegawai', 'reporter_users.username = reporter_pegawai.nik', 'left');
+		$this->db->where('tb_penilaian.id', $decoded_id);
+		$data['onepel'] = $this->db->get()->row();
 
 		if (!$data['onepel']) {
 			redirect('Admin/dataListPenilaian');
 			return;
 		}
 
-		$data['pelanggaranAll'] = $this->admin_model->getKategoriPelanggaran();
-		$data['userAll'] = $this->admin_model->getKaryawan();
+		$data['indikatorAll'] = $this->admin_model->getIndikatorPenilaian();
+		$data['karyawanAll'] = $this->admin_model->getKaryawan();
 
-		$this->form_validation->set_rules('karyawan', 'Nama Karyawan', 'required');
-		$this->form_validation->set_rules('indikatorPenilaian', 'Indikator Penilaian', 'required');
+		$this->form_validation->set_rules('karyawan', 'Nama Karyawan', 'required|integer');
+		$this->form_validation->set_rules('indikatorPenilaian', 'Indikator Penilaian', 'required|integer');
 		$this->form_validation->set_rules('tanggalPenilaian', 'Tanggal Penilaian', 'required');
-		$this->form_validation->set_rules('catatan', 'Catatan', 'required');
+		$this->form_validation->set_rules('catatan', 'Catatan', 'required|trim|htmlspecialchars');
 
 		if ($this->form_validation->run() == false) {
 
@@ -845,7 +670,6 @@ class Admin extends MY_Controller
 		} else {
 
 			$data_update = [
-				'user_id' => $data['user']->user_id,
 				'pegawai_id' => $this->input->post('karyawan'),
 				'indikator_id' => $this->input->post('indikatorPenilaian'),
 				'date' => $this->input->post('tanggalPenilaian'),
@@ -898,22 +722,11 @@ class Admin extends MY_Controller
 		}
 
 		// Check if pelanggaran exists
-		$dataPelanggaran = $this->db->get_where('tb_pelanggaran', ['id' => $id])->row();
+		$dataPelanggaran = $this->db->get_where('tb_penilaian', ['id' => $id])->row();
 
 		if ($dataPelanggaran) {
-			// Update kelas total point
-			$dataKelas = $this->db->get_where('tb_kelas', ['id' => $dataPelanggaran->class_id])->row();
-			if ($dataKelas) {
-				$pengurangan = $dataKelas->total_poin - $dataPelanggaran->point;
-				$data = [
-					'total_poin' => $pengurangan
-				];
-				$this->db->where('id', $dataPelanggaran->class_id);
-				$this->db->update('tb_kelas', $data);
-			}
-
 			// Delete the pelanggaran record
-			$delete_result = $this->db->delete('tb_pelanggaran', ['id' => $id]);
+			$delete_result = $this->db->delete('tb_penilaian', ['id' => $id]);
 
 			if ($delete_result) {
 				$response = array(
@@ -935,11 +748,5 @@ class Admin extends MY_Controller
 
 		echo json_encode($response);
 		exit; // Ensure no additional output
-	}
-
-	// Keep old method for backward compatibility
-	public function listPelanggaranDelete()
-	{
-		$this->deletePelanggaran();
 	}
 }

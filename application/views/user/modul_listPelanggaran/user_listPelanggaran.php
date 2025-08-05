@@ -4,12 +4,12 @@
         <div class="container-fluid">
           <div class="row mb-2">
             <div class="col-sm-6">
-              <h1 class="m-0 text-dark"><?= $page ;?></h1>
+              <h1 class="m-0 text-dark"><?= htmlspecialchars($page, ENT_QUOTES, 'UTF-8') ;?></h1>
             </div><!-- /.col -->
             <div class="col-sm-6">
               <ol class="breadcrumb float-sm-right">
-                <li class="breadcrumb-item"><small><?= $this->session->userdata('level') ;?></small></li>
-                <li class="breadcrumb-item"><a href="<?= base_url('User/listPelanggaran')?>"><small><?= $page ;?></small></a></li>
+                <li class="breadcrumb-item"><small><?= htmlspecialchars($this->session->userdata('level'), ENT_QUOTES, 'UTF-8') ;?></small></li>
+                <li class="breadcrumb-item"><a href="<?= base_url('User/listPelanggaran')?>"><small><?= htmlspecialchars($page, ENT_QUOTES, 'UTF-8') ;?></small></a></li>
               </ol>
             </div><!-- /.col -->
           </div><!-- /.row -->
@@ -48,7 +48,7 @@
           <!-- Default box -->
           <div class="card card-outline card-info">
             <div class="card-header">
-              <h4 class="card-title " text-align="center"><strong><?= $page; ?></strong></h4>
+              <h4 class="card-title " text-align="center"><strong><?= htmlspecialchars($page, ENT_QUOTES, 'UTF-8'); ?></strong></h4>
               <a class="btn btn-sm btn-outline-info float-right" href="<?= base_url('User/listPenilaianAdd')?>">
                 <i class="fas fa-plus"></i> Add Data
               </a>
@@ -61,7 +61,7 @@
                   <select class="form-control select2" id="filterUnit" name="filterUnit">
                     <option value="">Semua Unit</option>
                     <?php foreach($units as $unit): ?>
-                      <option value="<?= $unit->unit ?>"><?= $unit->unit ?></option>
+                      <option value="<?= htmlspecialchars($unit->unit, ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($unit->unit, ENT_QUOTES, 'UTF-8') ?></option>
                     <?php endforeach; ?>
                   </select>
                 </div>

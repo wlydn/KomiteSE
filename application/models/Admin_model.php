@@ -9,21 +9,18 @@ class Admin_model extends CI_Model {
 
 	// getCountKaryawan 
 	public function getCountKaryawan(){
-		$query = "SELECT COUNT(nik) as nik FROM pegawai";
-		return $this->db->query($query)->row()->nik;
+		return $this->db->count_all_results('pegawai');
 	}
 
 	public function getCountIndikatorPenilaian(){
 
-		$query = "SELECT COUNT(violation_name) as nmPelanggaran FROM tb_indikator";
-		return $this->db->query($query)->row()->nmPelanggaran;
+		return $this->db->count_all_results('tb_indikator');
 
 	}
 
 	public function getCountUsers(){
 
-		$query = "SELECT COUNT(id) as username_nik FROM tb_users";
-		return $this->db->query($query)->row()->username_nik;
+		return $this->db->count_all_results('tb_users');
 
 	}
 
@@ -68,89 +65,37 @@ class Admin_model extends CI_Model {
 
 	}
 
-	public function getPelanggaranByID($id){
-
+	public function getPelanggaranByID($id, $single = false)
+	{
 		// Return penilaian berdasarkan karyawan ID
-		$this->db->select('*');
-		$this->db->select('tb_penilaian.id as id_penilaian');
-		$this->db->select('pegawai.id as id_karyawan');
-		$this->db->select('tb_indikator.violation_name');
+		$this->db->select('tb_penilaian.*, pegawai.nama as nama_pegawai, tb_indikator.violation_name');
 		$this->db->from('tb_penilaian');
-		$this->db->join('pegawai','tb_penilaian.pegawai_id = pegawai.id');
-		$this->db->join('tb_indikator','tb_penilaian.indikator_id = tb_indikator.id');
+		$this->db->join('pegawai', 'tb_penilaian.pegawai_id = pegawai.id', 'left');
+		$this->db->join('tb_indikator', 'tb_penilaian.indikator_id = tb_indikator.id', 'left');
 		$this->db->where('pegawai.id', $id);
-		$query = $this->db->get();
-		return $query->result();
 
-	}
-	public function getOnePelanggaranByID($id){
+		if ($single) {
+			return $this->db->get()->row();
+		}
 
-		// Return satu penilaian berdasarkan karyawan ID
-		$this->db->select('*');
-		$this->db->select('tb_penilaian.id as id_penilaian');
-		$this->db->select('pegawai.id as id_karyawan');
-		$this->db->select('tb_indikator.violation_name');
-		$this->db->from('tb_penilaian');
-		$this->db->join('pegawai','tb_penilaian.pegawai_id = pegawai.id');
-		$this->db->join('tb_indikator','tb_penilaian.indikator_id = tb_indikator.id');
-		$this->db->where('pegawai.id', $id);
-		$query = $this->db->get();
-		return $query->row();
-
+		return $this->db->get()->result();
 	}
 
 	public function getCountPelanggaran($id){
 
-		$query = "SELECT COUNT(id) AS total_penilaian FROM tb_penilaian WHERE pegawai_id = $id";
-		return $this->db->query($query)->row();
+		return $this->db->where('pegawai_id', $id)->from('tb_penilaian')->count_all_results();
 
 	}
-
-
-	public function getKategoriPelanggaran(){
-
-		$query = "SELECT * FROM tb_indikator";
-		return $this->db->query($query)->result();
-
-	}
-
-	public function getOneKategoriPelanggaran($id){
-
-		$query = "SELECT * FROM tb_indikator WHERE id = '$id' ";
-		return $this->db->query($query)->row();
-
-	}
-
-	// getKelas and getOneKelas methods removed - kelas management not available
-
-	// getSiswa and getOneSiswa methods removed - siswa management not available
-
-	public function getOneGuru($id){
-
-		$query = "SELECT * FROM pegawai WHERE id = '$id' ";
-		return $this->db->query($query)->row();
-
-	}
-
-	// Add missing TopMurid method for compatibility
-	public function TopMurid(){
-		// Return top karyawan berdasarkan jumlah penilaian (same as TopKrywn)
-		return $this->TopKrywn();
-	}
-
-	// getOneWali method removed - wali management not available
 
 	public function getKaryawan(){
 
-		$query = "SELECT * FROM pegawai WHERE stts_aktif = 'AKTIF'";
-		return $this->db->query($query)->result();
+		return $this->db->get_where('pegawai', ['stts_aktif' => 'AKTIF'])->result();
 
 	}
 
 	public function getOneKaryawan($id){
 
-		$query = "SELECT * FROM pegawai WHERE id = '$id'";
-		return $this->db->query($query)->row();
+		return $this->db->get_where('pegawai', ['id' => $id])->row();
 
 	}
 
@@ -172,8 +117,7 @@ class Admin_model extends CI_Model {
 
 	public function getUsers(){
 
-		$query = "SELECT * FROM tb_users";
-		return $this->db->query($query)->result();
+		return $this->db->get('tb_users')->result();
 
 	}
 
@@ -197,57 +141,49 @@ class Admin_model extends CI_Model {
 
 	// Method tambahan untuk mendukung sistem penilaian karyawan
 	public function getIndikatorPenilaian(){
-		$query = "SELECT * FROM tb_indikator";
-		return $this->db->query($query)->result();
+		return $this->db->get('tb_indikator')->result();
 	}
 
 	public function getOneIndikatorPenilaian($id){
-		$query = "SELECT * FROM tb_indikator WHERE id = '$id'";
-		return $this->db->query($query)->row();
+		return $this->db->get_where('tb_indikator', ['id' => $id])->row();
 	}
 
-	public function getPenilaian(){
-		$query = "SELECT * FROM tb_penilaian ORDER BY date DESC";
-		return $this->db->query($query)->result();
+	public function getPenilaian()
+	{
+		$this->db->select('pn.*, p.nama as nama_pegawai, i.violation_name, u.username as pelapor');
+		$this->db->from('tb_penilaian as pn');
+		$this->db->join('pegawai as p', 'pn.pegawai_id = p.id', 'left');
+		$this->db->join('tb_indikator as i', 'pn.indikator_id = i.id', 'left');
+		$this->db->join('tb_users as u', 'pn.user_id = u.id', 'left');
+		$this->db->order_by('pn.date', 'desc');
+		return $this->db->get()->result();
 	}
 
 	public function getOnePenilaian($id){
-		$query = "SELECT * FROM tb_penilaian WHERE id = '$id'";
-		return $this->db->query($query)->row();
-	}
-
-	// Method untuk mendapatkan data siswa (untuk kompatibilitas)
-	public function getOneSiswa($id){
-		// Return data karyawan berdasarkan ID pegawai
-		$query = "SELECT * FROM pegawai WHERE id = '$id'";
-		return $this->db->query($query)->row();
+		return $this->db->get_where('tb_penilaian', ['id' => $id])->row();
 	}
 
 	public function getCountPenilaian(){
 		// Return count pegawai sebagai pengganti guru
-		$query = "SELECT COUNT(id) as total FROM tb_penilaian";
-		return $this->db->query($query)->row()->total;
+		return $this->db->count_all_results('tb_penilaian');
 	}
 
 	public function getCountPenilaianMingguan()
 	{
 		// Return count penilaian dalam minggu ini (Senin sampai Minggu) berdasarkan kolom date (tanggal penilaian)
-		$query = "SELECT COUNT(id) as total FROM tb_penilaian WHERE date >= DATE_SUB(CURDATE(), INTERVAL WEEKDAY(CURDATE()) DAY) AND date <= DATE_ADD(DATE_SUB(CURDATE(), INTERVAL WEEKDAY(CURDATE()) DAY), INTERVAL 6 DAY)";
-		return $this->db->query($query)->row()->total;
+		$this->db->where('date >=', 'DATE_SUB(CURDATE(), INTERVAL WEEKDAY(CURDATE()) DAY)', FALSE);
+		$this->db->where('date <=', 'DATE_ADD(DATE_SUB(CURDATE(), INTERVAL WEEKDAY(CURDATE()) DAY), INTERVAL 6 DAY)', FALSE);
+		return $this->db->from('tb_penilaian')->count_all_results();
 	}
 
 	public function getCountPenilaianBulanan()
 	{
 		// Return count penilaian dalam bulan ini berdasarkan kolom date (tanggal penilaian)
-		$query = "SELECT COUNT(id) as total FROM tb_penilaian WHERE MONTH(date) = MONTH(CURDATE()) AND YEAR(date) = YEAR(CURDATE())";
-		return $this->db->query($query)->row()->total;
+		$this->db->where('MONTH(date)', 'MONTH(CURDATE())', FALSE);
+		$this->db->where('YEAR(date)', 'YEAR(CURDATE())', FALSE);
+		return $this->db->from('tb_penilaian')->count_all_results();
 	}
 
-	public function getKategoriPenilaian()
-	{
-		$query = "SELECT * FROM tb_penilaian";
-		return $this->db->query($query)->result();
-	}
 
 	/**
 	 * Get website name from database

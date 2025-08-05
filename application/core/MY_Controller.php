@@ -18,20 +18,10 @@ class MY_Controller extends CI_Controller {
     }
     
     /**
-     * Set website title dari database
+     * Set website title
      */
     private function set_website_title() {
-        try {
-            $query = $this->db->get('tb_website');
-            if ($query->num_rows() > 0) {
-                $website = $query->row();
-                $this->data['title'] = $website->school_name;
-            } else {
-                $this->data['title'] = 'Komite SE Rayhan'; // Default fallback
-            }
-        } catch (Exception $e) {
-            $this->data['title'] = 'Komite SE Rayhan'; // Default fallback jika error
-        }
+        $this->data['title'] = 'Komite SE Rayhan'; // Static title
     }
     
     /**
@@ -49,20 +39,11 @@ class MY_Controller extends CI_Controller {
     }
     
     /**
-     * Get website name dari database
+     * Get website name
      * @return string
      */
     protected function get_website_name() {
-        try {
-            $query = $this->db->get('tb_website');
-            if ($query->num_rows() > 0) {
-                $website = $query->row();
-                return $website->school_name;
-            }
-        } catch (Exception $e) {
-            // Handle error silently
-        }
-        return 'Komite SE Rayhan'; // Default fallback
+        return 'Komite SE Rayhan'; // Static website name
     }
     
     /**

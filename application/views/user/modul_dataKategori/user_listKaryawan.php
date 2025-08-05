@@ -4,12 +4,12 @@
         <div class="container-fluid">
           <div class="row mb-2">
             <div class="col-sm-6">
-              <h1 class="m-0 text-dark"><?= $page ;?></h1>
+              <h1 class="m-0 text-dark"><?= htmlspecialchars($page, ENT_QUOTES, 'UTF-8') ;?></h1>
             </div><!-- /.col -->
             <div class="col-sm-6">
               <ol class="breadcrumb float-sm-right">
-                <li class="breadcrumb-item"><small><?= $user->nama_pegawai ;?></small></li>
-                <li class="breadcrumb-item"><a href="<?= base_url('user/dataKategoriListKaryawan')?>"><small><?= $page ;?></small></a></li>
+                <li class="breadcrumb-item"><small><?= htmlspecialchars($user->nama_pegawai, ENT_QUOTES, 'UTF-8') ;?></small></li>
+                <li class="breadcrumb-item"><a href="<?= base_url('user/dataKategoriListKaryawan')?>"><small><?= htmlspecialchars($page, ENT_QUOTES, 'UTF-8') ;?></small></a></li>
               </ol>
             </div><!-- /.col -->
           </div><!-- /.row -->
@@ -47,7 +47,7 @@
           <!-- Default box -->
           <div class="card card-outline card-info">
             <div class="card-header">
-              <h4 class="card-title " text-align="center"><strong><?= $page; ?></strong></h4>
+              <h4 class="card-title " text-align="center"><strong><?= htmlspecialchars($page, ENT_QUOTES, 'UTF-8'); ?></strong></h4>
             </div>
             <div class="card-body">
               <!-- SEARCH FORM -->

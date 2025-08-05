@@ -4,12 +4,12 @@
         <div class="container-fluid">
           <div class="row mb-2">
             <div class="col-sm-6">
-              <h1 class="m-0 text-dark"><?= $page ;?></h1>
+              <h1 class="m-0 text-dark"><?= htmlspecialchars($page, ENT_QUOTES, 'UTF-8') ;?></h1>
             </div><!-- /.col -->
             <div class="col-sm-6">
               <ol class="breadcrumb float-sm-right">
-                <li class="breadcrumb-item"><small><?= $this->session->userdata('level') ;?></small></li>
-                <li class="breadcrumb-item"><a href="<?= base_url('user/dAdministrator')?>"><small><?= $page ;?></small></a></li>
+                <li class="breadcrumb-item"><small><?= htmlspecialchars($this->session->userdata('level'), ENT_QUOTES, 'UTF-8') ;?></small></li>
+                <li class="breadcrumb-item"><a href="<?= base_url('user/dAdministrator')?>"><small><?= htmlspecialchars($page, ENT_QUOTES, 'UTF-8') ;?></small></a></li>
               </ol>
             </div><!-- /.col -->
           </div><!-- /.row -->
@@ -52,7 +52,7 @@
 									<!-- small box -->
 									<div class="small-box bg-info">
 										<div class="inner">
-											<h3><?= $ttlkaryawan ;?></h3>
+											<h3><?= htmlspecialchars($ttlkaryawan, ENT_QUOTES, 'UTF-8') ;?></h3>
 
 											<p>Jumlah Karyawan</p>
 										</div>
@@ -64,7 +64,7 @@
 									<!-- small box -->
 									<div class="small-box bg-success">
 										<div class="inner">
-											<h3 ><?= $ttlIndikator?></h3>
+											<h3 ><?= htmlspecialchars($ttlIndikator, ENT_QUOTES, 'UTF-8')?></h3>
 
 											<p>Indikator Penilaian</p>
 										</div>
@@ -76,7 +76,7 @@
 									<!-- small box -->
 									<div class="small-box bg-warning">
 										<div class="inner">
-											<h3><?= $ttlPenilaianMingguan?></h3>
+											<h3><?= htmlspecialchars($ttlPenilaianMingguan, ENT_QUOTES, 'UTF-8')?></h3>
 
 											<p>Penilaian Mingguan</p>
 										</div>
@@ -89,7 +89,7 @@
 									<!-- small box -->
 									<div class="small-box bg-danger">
 										<div class="inner">
-											<h3><?= $ttlPenilaianBulanan?></h3>
+											<h3><?= htmlspecialchars($ttlPenilaianBulanan, ENT_QUOTES, 'UTF-8')?></h3>
 
 											<p>Penilaian Bulanan</p>
 										</div>
@@ -130,8 +130,8 @@
                       <?php $i=0; foreach($penilaian as $terbanyak) :  $i++;?>
                       <tr>
 												<td style="width: 10px;"><?= $i ;?></td>
-                        <td style="width: 500px; white-space: normal"><?= $terbanyak->violation_name ;?></td>
-                        <td style="width: 10px; text-align: center"><?= $terbanyak->total_penilaian ;?></td>
+                        <td style="width: 500px; white-space: normal"><?= htmlspecialchars($terbanyak->violation_name, ENT_QUOTES, 'UTF-8') ;?></td>
+                        <td style="width: 10px; text-align: center"><?= htmlspecialchars($terbanyak->total_penilaian, ENT_QUOTES, 'UTF-8') ;?></td>
                       </tr>
                     <?php endforeach; ?>
                   </tbody>
@@ -173,8 +173,8 @@
                     <?php $i=0; foreach($topkrywn as $terakhir) :  $i++;?>
                     <tr>
                       <td style="width: 10px;"><?= $i ;?></td>
-                      <td><?= $terakhir->std_name ;?></td>
-                      <td><?= $terakhir->total_penilaian ;?> Penilaian</td>
+                      <td><?= htmlspecialchars($terakhir->std_name, ENT_QUOTES, 'UTF-8') ;?></td>
+                      <td><?= htmlspecialchars($terakhir->total_penilaian, ENT_QUOTES, 'UTF-8') ;?> Penilaian</td>
                       <!-- <td class="text-center">
                         <a href="<?= base_url('User/dashboardDetail/'.$this->encrypt->encode($terakhir->id_siswa).'')?>" title="Detail"><i class="fas fa-info-circle text-info"></i></a>
                       </td> -->

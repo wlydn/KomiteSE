@@ -124,7 +124,7 @@ class Ajax extends CI_Controller {
 			
 			if($this->session->userdata('level') == 'Admin'){
 				$row[] = '
-				<a class="btn btn-sm btn-warning" style="margin-right:10px; height:30px; width:30px;" href="#" title="Edit" disabled><i class="fas fa-edit text-light"></i></a>
+				<a class="btn btn-sm btn-warning" style="margin-right:10px; height:30px; width:30px;" href="'.base_url('Admin/listPenilaianEdit/').$this->encrypt->encode($penilaian->id).'" title="Edit"><i class="fas fa-edit text-light"></i></a>
 				<a class="btn btn-sm btn-danger" style="margin-right:10px; height:30px; width:30px;" id="'.$penilaian->id.'" onclick="deleteDataPenilaianAdmin('.$penilaian->id.')" title="Delete"><i class="fas fa-trash text-white"></i></a>';
 			} elseif($this->session->userdata('level') == 'User') {
 				$row[] = ''; // No actions displayed for User role

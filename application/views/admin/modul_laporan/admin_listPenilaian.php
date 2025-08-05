@@ -4,12 +4,12 @@
         <div class="container-fluid">
           <div class="row mb-2">
             <div class="col-sm-6">
-              <h1 class="m-0 text-dark"><?= $page ;?></h1>
+              <h1 class="m-0 text-dark"><?= htmlspecialchars($page, ENT_QUOTES, 'UTF-8') ;?></h1>
             </div><!-- /.col -->
             <div class="col-sm-6">
               <ol class="breadcrumb float-sm-right">
-                <li class="breadcrumb-item"><small><?= $this->session->userdata('level') ;?></small></li>
-                <li class="breadcrumb-item"><a href="<?= base_url('Admin/listPelanggaran')?>"><small><?= $page ;?></small></a></li>
+                <li class="breadcrumb-item"><small><?= htmlspecialchars($this->session->userdata('level'), ENT_QUOTES, 'UTF-8') ;?></small></li>
+                <li class="breadcrumb-item"><a href="<?= base_url('Admin/listPelanggaran')?>"><small><?= htmlspecialchars($page, ENT_QUOTES, 'UTF-8') ;?></small></a></li>
               </ol>
             </div><!-- /.col -->
           </div><!-- /.row -->
@@ -78,7 +78,7 @@
           <!-- Default box -->
           <div class="card card-outline card-info">
             <div class="card-header">
-              <h4 class="card-title " text-align="center"><strong><?= $page; ?></strong></h4>
+              <h4 class="card-title " text-align="center"><strong><?= htmlspecialchars($page, ENT_QUOTES, 'UTF-8'); ?></strong></h4>
               <a class="btn btn-sm btn-outline-info float-right" href="<?= base_url('Admin/dataListPenilaianAdd')?>">
                 <i class="fas fa-plus"></i> Add Data
               </a>
@@ -91,7 +91,7 @@
                   <select class="form-control select2" id="filterUnit" name="filterUnit">
                     <option value="">Semua Unit</option>
                     <?php foreach($units as $unit): ?>
-                      <option value="<?= $unit->unit ?>"><?= $unit->unit ?></option>
+                      <option value="<?= htmlspecialchars($unit->unit, ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($unit->unit, ENT_QUOTES, 'UTF-8') ?></option>
                     <?php endforeach; ?>
                   </select>
                 </div>
@@ -156,4 +156,52 @@
       </section>
       <!-- /.content -->
     </div>
-    <!-- Barang Hapus Modal-->
+<!-- Barang Hapus Modal-->
+<script>
+  function deletePelanggaran(id) {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        $.ajax({
+          url: "<?= base_url('admin/deletePelanggaran') ?>",
+          type: "POST",
+          data: {
+            id: id,
+            '<?= $this->security->get_csrf_token_name(); ?>': '<?= $this->security->get_csrf_hash(); ?>'
+          },
+          success: function(data) {
+            if (data.status === 'success') {
+              Swal.fire(
+                'Deleted!',
+                'Your file has been deleted.',
+                'success'
+              ).then(() => {
+                location.reload();
+              });
+            } else {
+              Swal.fire(
+                'Error!',
+                data.message,
+                'error'
+              );
+            }
+          },
+          error: function(xhr, ajaxOptions, thrownError) {
+            Swal.fire(
+              'Error!',
+              'Something went wrong. Please try again later.',
+              'error'
+            );
+          }
+        });
+      }
+    })
+  }
+</script>

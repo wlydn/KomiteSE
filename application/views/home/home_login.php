@@ -1,6 +1,6 @@
     <div class="intro-section" id="home-section">
 
-      <div class="slide-1" style="background-image: url('<?= base_url('assets/oneschool/');?>images/background.jpg');" data-stellar-background-ratio="0.5">
+      <div class="slide-1" style="background-image: url('<?= base_url('assets/oneschool/');?>images/background.jpg');">
         <div class="container">
           <div class="row align-items-center">
             <div class="col-12">

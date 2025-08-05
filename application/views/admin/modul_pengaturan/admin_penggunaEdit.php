@@ -4,13 +4,13 @@
             <div class="container-fluid">
               <div class="row mb-2">
                 <div class="col-sm-6">
-                  <h1 class="m-0 text-dark"><?= $page ;?></h1>
+                  <h1 class="m-0 text-dark"><?= htmlspecialchars($page, ENT_QUOTES, 'UTF-8') ;?></h1>
                 </div><!-- /.col -->
                 <div class="col-sm-6">
                   <ol class="breadcrumb float-sm-right">
                     <li class="breadcrumb-item"><small>Admin</small></li>
-                    <li class="breadcrumb-item"><a href="<?= base_url('Admin/pengaturanPengguna');?>"><small><?= $parent ;?></small></a></li>
-                    <li class="breadcrumb-item"><a href="<?= base_url('Admin/pengaturanPenggunaEdit/'.$this->encrypt->encode($oneUsers->id));?>"><small><?= $page ;?></small></a></li>
+                    <li class="breadcrumb-item"><a href="<?= base_url('Admin/pengaturanPengguna');?>"><small><?= htmlspecialchars($parent, ENT_QUOTES, 'UTF-8') ;?></small></a></li>
+                    <li class="breadcrumb-item"><a href="<?= base_url('Admin/pengaturanPenggunaEdit/'.$this->encrypt->encode($oneUsers->id));?>"><small><?= htmlspecialchars($page, ENT_QUOTES, 'UTF-8') ;?></small></a></li>
                   </ol>
                 </div><!-- /.col -->
               </div><!-- /.row -->
@@ -48,7 +48,7 @@
               <!-- Default box -->
               <div class="card card-outline card-info">
                 <div class="card-header">
-                  <h4 class="card-title " text-align="center"><strong><?= $page; ?></strong></h4>
+                  <h4 class="card-title " text-align="center"><strong><?= htmlspecialchars($page, ENT_QUOTES, 'UTF-8'); ?></strong></h4>
                   <a class="btn btn-secondary btn-sm float-right" href="<?php echo base_url('admin/pengaturanPengguna');?>">
                     <i class="fas fa-arrow-left"></i>&ensp;Back
                   </a>
@@ -58,12 +58,12 @@
                   <form action="<?= base_url('Admin/pengaturanPenggunaEdit/'.$this->encrypt->encode($oneUsers->id))?>" method="post">
 
                     <input type="hidden" name="<?= $this->security->get_csrf_token_name(); ?>" value="<?= $this->security->get_csrf_hash(); ?>">
-                    <input type="hidden" name="z" value="<?= $oneUsers->id ;?>">
+                    <input type="hidden" name="z" value="<?= htmlspecialchars($oneUsers->id, ENT_QUOTES, 'UTF-8') ;?>">
 										
 										<!-- Username -->
 										<div class="form-group">
 											<label for="editPenggunaUsername" class="col-form-label">Username</label>
-											<input type="text" name="username" class="form-control" id="editPenggunaUsername" placeholder="Username" value="<?= $oneUsers->username?>" disabled/>
+											<input type="text" name="username" class="form-control" id="editPenggunaUsername" placeholder="Username" value="<?= htmlspecialchars($oneUsers->username, ENT_QUOTES, 'UTF-8')?>" disabled/>
 											<?= form_error('username', '<small class="text-danger pl-3">', '</small>');?>
 										</div>
 										<!-- / Username -->
@@ -71,7 +71,7 @@
                     <!-- Nama Pegawai -->
                     <div class="form-group">
                       <label for="editPenggunaFullname" class="col-form-label">Nama Pegawai</label>
-                      <input type="text" name="fullname" class="form-control" id="editPenggunaFullname" placeholder="Fullname" value="<?= $oneUsers->nama_pegawai ? $oneUsers->nama_pegawai : 'Admin User' ?>" disabled />
+                      <input type="text" name="fullname" class="form-control" id="editPenggunaFullname" placeholder="Fullname" value="<?= htmlspecialchars($oneUsers->nama_pegawai ? $oneUsers->nama_pegawai : 'Admin User', ENT_QUOTES, 'UTF-8') ?>" disabled />
                       <?= form_error('fullname', '<small class="text-danger pl-3">', '</small>');?>
                     </div>
                     <!-- / Nama Pegawai -->
@@ -81,7 +81,7 @@
                     <div class="form-group">
                       <label for="editPenggunaPassword" class="col-form-label">Password</label>
                       <div class="input-group">
-                        <input type="password" name="password" class="form-control" id="editPenggunaPassword" placeholder="Password" value="<?= set_value('password')?>" />
+                        <input type="password" name="password" class="form-control" id="editPenggunaPassword" placeholder="Password" value="<?= htmlspecialchars(set_value('password'), ENT_QUOTES, 'UTF-8')?>" />
                         <div class="input-group-append">
                           <button class="btn btn-outline-secondary" type="button" id="togglePassword"><i class="fas fa-eye"></i></button>
                         </div>

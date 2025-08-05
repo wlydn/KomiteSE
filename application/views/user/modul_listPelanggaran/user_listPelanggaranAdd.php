@@ -4,13 +4,13 @@
             <div class="container-fluid">
               <div class="row mb-2">
                 <div class="col-sm-6">
-                  <h1 class="m-0 text-dark"><?= $page ;?></h1>
+                  <h1 class="m-0 text-dark"><?= htmlspecialchars($page, ENT_QUOTES, 'UTF-8') ;?></h1>
                 </div><!-- /.col -->
                 <div class="col-sm-6">
                   <ol class="breadcrumb float-sm-right">
-                    <li class="breadcrumb-item"><small><?= $this->session->userdata('level');?></small></li>
-                    <li class="breadcrumb-item"><a href="<?= base_url('User/listPenilaian');?>"><small><?= $parent ;?></small></a></li>
-                    <li class="breadcrumb-item"><a href="<?= base_url('User/listPenilaianAdd/');?>"><small><?= $page ;?></small></a></li>
+                    <li class="breadcrumb-item"><small><?= htmlspecialchars($this->session->userdata('level'), ENT_QUOTES, 'UTF-8');?></small></li>
+                    <li class="breadcrumb-item"><a href="<?= base_url('User/listPenilaian');?>"><small><?= htmlspecialchars($parent, ENT_QUOTES, 'UTF-8') ;?></small></a></li>
+                    <li class="breadcrumb-item"><a href="<?= base_url('User/listPenilaianAdd/');?>"><small><?= htmlspecialchars($page, ENT_QUOTES, 'UTF-8') ;?></small></a></li>
                   </ol>
                 </div><!-- /.col -->
               </div><!-- /.row -->
@@ -48,7 +48,7 @@
               <!-- Default box -->
               <div class="card card-outline card-info">
                 <div class="card-header">
-                  <h4 class="card-title " text-align="center"><strong><?= $page; ?></strong></h4>
+                  <h4 class="card-title " text-align="center"><strong><?= htmlspecialchars($page, ENT_QUOTES, 'UTF-8'); ?></strong></h4>
                   <a class="btn btn-secondary btn-sm float-right" href="<?php echo base_url('User/listPenilaian');?>">
                     <i class="fas fa-arrow-left"></i>&ensp;Back
                   </a>
@@ -68,7 +68,7 @@
                             <option value="" selected="selected">Tulis NIP / Nama Karyawan</option>
                             <?php
                             foreach ($karyawanAll as $karyawan) {
-                              echo '<option value="'.$karyawan->id.'">'.$karyawan->nik.' / '.$karyawan->nama.' / '.$karyawan->jbtn.'</option>';
+                              echo '<option value="'.htmlspecialchars($karyawan->id, ENT_QUOTES, 'UTF-8').'">'.htmlspecialchars($karyawan->nik, ENT_QUOTES, 'UTF-8').' / '.htmlspecialchars($karyawan->nama, ENT_QUOTES, 'UTF-8').' / '.htmlspecialchars($karyawan->jbtn, ENT_QUOTES, 'UTF-8').'</option>';
                             }
                             ?>
                           </select>
@@ -86,7 +86,7 @@
                             <option value="" selected="selected">Tulis Kode / Indikator Penilaian</option>
                             <?php
                             foreach ($indikatorPenilaianAll as $indikator) {
-                              echo '<option value="'.$indikator->id.'"> '.$indikator->code.' ~ '.$indikator->violation_name.'</option>';
+                              echo '<option value="'.htmlspecialchars($indikator->id, ENT_QUOTES, 'UTF-8').'"> '.htmlspecialchars($indikator->code, ENT_QUOTES, 'UTF-8').' ~ '.htmlspecialchars($indikator->violation_name, ENT_QUOTES, 'UTF-8').'</option>';
                             }
                             ?>
                           </select>
@@ -103,7 +103,7 @@
                     <div class="row ">
 											<div class="col-md-6">
                       <label for="pelapor" class="col-form-label">Pelapor</label>
-                      <input type="text" name="pelapor" id="pelapor" class="form-control" value="<?= $user->nama_pegawai ?>" readonly>
+                      <input type="text" name="pelapor" id="pelapor" class="form-control" value="<?= htmlspecialchars($user->nama_pegawai, ENT_QUOTES, 'UTF-8') ?>" readonly>
                       <?= form_error('pelapor', '<small class="text-danger pl-3">', '</small>');?>
                     </div>
 										<div class="col-md-6">
