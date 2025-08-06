@@ -316,7 +316,7 @@ class Admin extends MY_Controller
 			if ($this->input->post('level') == 'Admin') {
 
 				$pegawai_id = $this->input->post('addNIKAdmin');
-				$pegawai_data = $this->admin_model->getOneKaryawan($pegawai_id);
+				$pegawai_data = $this->admin_model->getKaryawan($pegawai_id);
 				$data = [
 					'pegawai_id' => $pegawai_id,
 					'username' => $pegawai_data->nik,
@@ -328,7 +328,7 @@ class Admin extends MY_Controller
 			} elseif ($this->input->post('level') == 'User') {
 
 				$pegawai_id = $this->input->post('addNIKUser');
-				$pegawai_data = $this->admin_model->getOneKaryawan($pegawai_id);
+				$pegawai_data = $this->admin_model->getKaryawan($pegawai_id);
 
 				$data = [
 					'pegawai_id' => $pegawai_id,

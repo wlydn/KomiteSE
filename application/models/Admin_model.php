@@ -2,39 +2,38 @@
 
 class Admin_model extends CI_Model {
 
-	public function __construct(){
+	public function __construct()
+	{
 		parent::__construct();
 		$this->load->database();
 	}
 
 	// getCountKaryawan 
-	public function getCountKaryawan(){
+	public function getCountKaryawan()
+	{
+		$this->db->where('stts_aktif', 'AKTIF');
 		return $this->db->count_all_results('pegawai');
 	}
 
-	public function getCountIndikatorPenilaian(){
-
+	public function getCountIndikatorPenilaian()
+	{
 		return $this->db->count_all_results('tb_indikator');
-
 	}
 
-	public function getCountUsers(){
-
+	public function getCountUsers()
+	{
 		return $this->db->count_all_results('tb_users');
-
 	}
 
-	public function TopKrywn(){
-
+	public function TopKrywn()
+	{
 		// Return top karyawan berdasarkan jumlah penilaian dalam minggu ini
 		$this->db->select('COUNT(tb_penilaian.id) as total_pelanggaran');
-		$this->db->select('COUNT(tb_penilaian.id) as total_poin');
-		$this->db->select('pegawai.id as id_siswa');
 		$this->db->select('pegawai.nama as std_name');
 		$this->db->select('pegawai.nik');
 		$this->db->select('pegawai.jbtn');
 		$this->db->from('tb_penilaian');
-		$this->db->join('pegawai','tb_penilaian.pegawai_id = pegawai.id', 'left');
+		$this->db->join('pegawai', 'tb_penilaian.pegawai_id = pegawai.id', 'left');
 		// Filter untuk minggu ini (Senin sampai Minggu)
 		$this->db->where('tb_penilaian.date >=', 'DATE_SUB(CURDATE(), INTERVAL WEEKDAY(CURDATE()) DAY)', FALSE);
 		$this->db->where('tb_penilaian.date <=', 'DATE_ADD(DATE_SUB(CURDATE(), INTERVAL WEEKDAY(CURDATE()) DAY), INTERVAL 6 DAY)', FALSE);
@@ -43,17 +42,16 @@ class Admin_model extends CI_Model {
 		$this->db->limit(5);
 		$query = $this->db->get();
 		return $query->result();
-
 	}
 
-	public function TopPelanggaran(){
-
+	public function TopPelanggaran()
+	{
 		// Return top indikator berdasarkan penggunaan dalam minggu ini
 		$this->db->select('COUNT(tb_penilaian.id) as total_pelanggaran');
 		$this->db->select('tb_indikator.violation_name');
 		$this->db->select('tb_indikator.code');
 		$this->db->from('tb_penilaian');
-		$this->db->join('tb_indikator','tb_penilaian.indikator_id = tb_indikator.id');
+		$this->db->join('tb_indikator', 'tb_penilaian.indikator_id = tb_indikator.id');
 		// Filter untuk minggu ini (Senin sampai Minggu)
 		$this->db->where('tb_penilaian.date >=', 'DATE_SUB(CURDATE(), INTERVAL WEEKDAY(CURDATE()) DAY)', FALSE);
 		$this->db->where('tb_penilaian.date <=', 'DATE_ADD(DATE_SUB(CURDATE(), INTERVAL WEEKDAY(CURDATE()) DAY), INTERVAL 6 DAY)', FALSE);
@@ -62,7 +60,6 @@ class Admin_model extends CI_Model {
 		$this->db->limit(5);
 		$query = $this->db->get();
 		return $query->result();
-
 	}
 
 	public function getPelanggaranByID($id, $single = false)
@@ -81,48 +78,42 @@ class Admin_model extends CI_Model {
 		return $this->db->get()->result();
 	}
 
-	public function getCountPelanggaran($id){
-
+	public function getCountPelanggaran($id)
+	{
 		return $this->db->where('pegawai_id', $id)->from('tb_penilaian')->count_all_results();
-
 	}
 
-	public function getKaryawan(){
-
-		return $this->db->get_where('pegawai', ['stts_aktif' => 'AKTIF'])->result();
-
+	public function getKaryawan($id = null)
+	{
+		if ($id === null) {
+			return $this->db->get_where('pegawai', ['stts_aktif' => 'AKTIF'])->result();
+		} else {
+			return $this->db->get_where('pegawai', ['id' => $id])->row();
+		}
 	}
 
-	public function getOneKaryawan($id){
-
-		return $this->db->get_where('pegawai', ['id' => $id])->row();
-
-	}
-
-	public function getOnePelanggaran($id){
-
+	public function getOnePelanggaran($id)
+	{
 		// Return satu penilaian berdasarkan ID penilaian
 		$this->db->select('*');
 		$this->db->select('tb_penilaian.id as id_penilaian');
 		$this->db->select('pegawai.id as id_karyawan');
 		$this->db->select('tb_indikator.violation_name');
 		$this->db->from('tb_penilaian');
-		$this->db->join('pegawai','tb_penilaian.pegawai_id = pegawai.id');
-		$this->db->join('tb_indikator','tb_penilaian.indikator_id = tb_indikator.id');
+		$this->db->join('pegawai', 'tb_penilaian.pegawai_id = pegawai.id');
+		$this->db->join('tb_indikator', 'tb_penilaian.indikator_id = tb_indikator.id');
 		$this->db->where('tb_penilaian.id', $id);
 		$query = $this->db->get();
 		return $query->row();
-
 	}
 
-	public function getUsers(){
-
+	public function getUsers()
+	{
 		return $this->db->get('tb_users')->result();
-
 	}
 
-	public function getOneUsers($id){
-
+	public function getOneUsers($id)
+	{
 		$this->db->select('
 			tb_users.id,
 			tb_users.username,
@@ -136,15 +127,16 @@ class Admin_model extends CI_Model {
 		$this->db->join('pegawai', 'tb_users.username = pegawai.nik', 'left');
 		$this->db->where('tb_users.id', $id);
 		return $this->db->get()->row();
-
 	}
 
 	// Method tambahan untuk mendukung sistem penilaian karyawan
-	public function getIndikatorPenilaian(){
+	public function getIndikatorPenilaian()
+	{
 		return $this->db->get('tb_indikator')->result();
 	}
 
-	public function getOneIndikatorPenilaian($id){
+	public function getOneIndikatorPenilaian($id)
+	{
 		return $this->db->get_where('tb_indikator', ['id' => $id])->row();
 	}
 
@@ -159,11 +151,13 @@ class Admin_model extends CI_Model {
 		return $this->db->get()->result();
 	}
 
-	public function getOnePenilaian($id){
+	public function getOnePenilaian($id)
+	{
 		return $this->db->get_where('tb_penilaian', ['id' => $id])->row();
 	}
 
-	public function getCountPenilaian(){
+	public function getCountPenilaian()
+	{
 		// Return count pegawai sebagai pengganti guru
 		return $this->db->count_all_results('tb_penilaian');
 	}
@@ -184,11 +178,8 @@ class Admin_model extends CI_Model {
 		return $this->db->from('tb_penilaian')->count_all_results();
 	}
 
-
 	/**
 	 * Get website name from database
 	 * Used for page titles
 	 */
-
-
 }

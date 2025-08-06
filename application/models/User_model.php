@@ -41,6 +41,7 @@ class User_model extends CI_Model
 
 	public function getCountKaryawan()
 	{
+		$this->db->where('stts_aktif', 'AKTIF');
 		return $this->db->count_all_results('pegawai');
 	}
 
@@ -68,14 +69,13 @@ class User_model extends CI_Model
 		return $this->db->where('pegawai_id', $id)->from('tb_penilaian')->count_all_results();
 	}
 
-	public function getKaryawan()
+	public function getKaryawan($id = null)
 	{
-		return $this->db->get_where('pegawai', ['stts_aktif' => 'AKTIF'])->result();
-	}
-
-	public function getOneKaryawan($id)
-	{
-		return $this->db->get_where('pegawai', ['id' => $id])->row();
+		if ($id === null) {
+			return $this->db->get_where('pegawai', ['stts_aktif' => 'AKTIF'])->result();
+		} else {
+			return $this->db->get_where('pegawai', ['id' => $id])->row();
+		}
 	}
 
 	public function getOneUsers($id)
